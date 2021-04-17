@@ -129,6 +129,11 @@ class TipoCambioController extends Controller
      */
     public function create(Request $request)
     {
+        $tipousuario = session()->all()['tipousuario_id'];        
+        $permiso = Libreria::verificarPermiso($tipousuario);
+        if($permiso !== true){
+            return $permiso;
+        }
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
         $entidad  = 'moneda';
         $moneda = null;
@@ -147,12 +152,17 @@ class TipoCambioController extends Controller
      */
     public function store(Request $request)
     {
+        $tipousuario = session()->all()['tipousuario_id'];        
+        $permiso = Libreria::verificarPermiso($tipousuario);
+        if($permiso !== true){
+            return $permiso;
+        }
         $listar     = Libreria::getParam($request->input('listar'), 'NO');
         $reglas     = array(
             'descripcion'   => 'required',
             'preciocompra'  => 'required',
             'precioventa'   => 'required',
-            'codigo'   => 'required',
+            'codigo'        => 'required',
         );
         $mensajes = array(
             'nombre.required'         => 'Debe ingresar un nombre',
@@ -167,11 +177,11 @@ class TipoCambioController extends Controller
         }
         $error = DB::transaction(function() use($request){
             $moneda = Moneda::create([
-                'nombre'=> strtoupper($request->nombre),
-                'codigo'=> strtoupper($request->codigo),
-                'preciocompra'=>$request->preciocompra,
-                'precioventa'=>$request->precioventa,
-                'descripcion'=> Libreria::getParam($request->descripcion),
+                'nombre'        =>  strtoupper($request->nombre),
+                'codigo'        =>  strtoupper($request->codigo),
+                'preciocompra'  =>  $request->preciocompra,
+                'precioventa'   =>  $request->precioventa,
+                'descripcion'   =>  Libreria::getParam($request->descripcion),
             ]);
         });
 
@@ -197,12 +207,17 @@ class TipoCambioController extends Controller
      */
     public function edit($id, Request $request)
     {
+        $tipousuario = session()->all()['tipousuario_id'];        
+        $permiso = Libreria::verificarPermiso($tipousuario);
+        if($permiso !== true){
+            return $permiso;
+        }
         $existe = Libreria::verificarExistencia($id, 'moneda');
         if ($existe !== true) {
             return $existe;
         }
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
-        $moneda = Moneda::find($id);
+        $moneda   = Moneda::find($id);
         $entidad  = 'moneda';
         $formData = array('moneda.update', $id);
         $formData = array('route' => $formData, 'method' => 'PUT', 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
@@ -219,8 +234,12 @@ class TipoCambioController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $tipousuario = session()->all()['tipousuario_id'];        
+        $permiso = Libreria::verificarPermiso($tipousuario);
+        if($permiso !== true){
+            return $permiso;
+        }
         $existe = Libreria::verificarExistencia($id, 'moneda');
-
         if ($existe !== true) {
             return $existe;
         }
@@ -261,6 +280,11 @@ class TipoCambioController extends Controller
      */
     public function destroy($id)
     {
+        $tipousuario = session()->all()['tipousuario_id'];        
+        $permiso = Libreria::verificarPermiso($tipousuario);
+        if($permiso !== true){
+            return $permiso;
+        }
         $existe = Libreria::verificarExistencia($id, 'moneda');
         if ($existe !== true) {
             return $existe;
@@ -274,6 +298,11 @@ class TipoCambioController extends Controller
 
     public function eliminar($id, $listarLuego)
     {
+        $tipousuario = session()->all()['tipousuario_id'];        
+        $permiso = Libreria::verificarPermiso($tipousuario);
+        if($permiso !== true){
+            return $permiso;
+        }
         $existe = Libreria::verificarExistencia($id, 'moneda');
         if ($existe !== true) {
             return $existe;

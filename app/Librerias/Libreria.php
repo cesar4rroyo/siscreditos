@@ -2,7 +2,6 @@
 
 namespace App\Librerias;
 use Validator;
-use App\Menuoption;
 
 /**
 * Libreria de clases
@@ -122,6 +121,21 @@ class Libreria
 	static function obtenerParametro($value = NULL)
 	{
 		return (!is_null($value) && trim($value) !== '') ? $value : NULL ;
+	}
+
+	public static function verificarPermiso($tipousuario_id){
+		if($tipousuario_id!=2){ //2 ->Usuario Operador
+			return true;
+		}else{
+			$cadena = '<blockquote><p class="text-danger">No tiene los privilegios necesarios para realizar esta accion</p></blockquote>';
+			$cadena .= '<button class="btn btn-warning btn-sm" id="btnCerrarexiste"><i class="fa fa-times fa-lg"></i> Cerrar</button>';
+			$cadena .= "<script type=\"text/javascript\">
+							$(document).ready(function() {
+								$('#btnCerrarexiste').attr('onclick','cerrarModal(' + (contadorModal - 1) + ');').unbind('click');
+							}); 
+						</script>";
+			return $cadena;
+		}
 	}
 
 	public static function verificarExistencia($id, $tabla)

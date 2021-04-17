@@ -248,7 +248,7 @@ class UsuarioController extends Controller
     public function perfil()
     {
         $id = session()->get('usuario_id');
-        $modelo = Usuario::with('persona.cargo', 'persona.area')->findOrFail($id);
+        $modelo = Usuario::with('persona')->findOrFail($id);
         return view($this->folderview.'.perfil')->with(compact('modelo'));
     }
 

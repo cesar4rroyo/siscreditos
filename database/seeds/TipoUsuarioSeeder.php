@@ -18,8 +18,5 @@ class TipoUsuarioSeeder extends Seeder
         DB::table('tipousuario')->insert([
             'descripcion' => 'Operador',
         ]);
-        DB::table('tipousuario')->insert([
-            'descripcion'=>'Cliente'
-        ]); 
     }
 }

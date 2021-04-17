@@ -39,7 +39,6 @@ class Usuario extends Authenticatable
                  $nombres = 'ADMIN PRINCIPAL';
              }else{
                 $nombres= $this->persona()->get()->toArray()[0]['nombres'] . ' '  . $this->persona()->get()->toArray()[0]['apellidopaterno'] . ' ' . $this->persona()->get()->toArray()[0]['apellidomaterno'];
-                $area = $this->persona()->with('area')->get()->toArray()[0];
             }
              Session::put([
                  'tipousuario_id' => $tipousuario[0]['id'],
@@ -47,7 +46,7 @@ class Usuario extends Authenticatable
                  'usuario' => $this->login,
                  'accesos' => $this->tipousuario()->with('opcionmenu')->get()->toArray()[0]['opcionmenu'] ?? null,
                  'usuario_id' => $this->id,
-                 'persona' => $this->persona()->with('cargo', 'area')->get()->toArray()[0] ?? null,
+                 'persona' => $this->persona()->get()->toArray()[0] ?? null,
                  'nombres'=> $nombres ?? null,
                  'roles' => $this->persona()->with('roles')->get()->toArray()[0]['roles'] ?? null,                 
              ]);

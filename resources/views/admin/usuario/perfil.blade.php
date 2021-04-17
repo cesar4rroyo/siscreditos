@@ -23,9 +23,7 @@
                                             <span class="info-box-icon bg-yellow"><i class="fa fa-user-alt"></i></span>
                                             <div class="info-box-content">
                                                 <span class="info-box-number"> <i class="fas fa-at"></i> {{$modelo->login}}</span>
-                                                <span class="info-box-number"> <i class="fas fa-user-circle"></i> {{($modelo->personal) ? ($modelo->personal->apellidopaterno . ' ' . $modelo->personal->apellidomaterno . ' ' . $modelo->personal->nombres) : '-'}}</span>
-                                                <span class="info-box-number"> <i class="fas fa-suitcase"></i> {{$modelo->personal->cargo->descripcion}}</span>
-                                                <span class="info-box-number"> <i class="fas fa-file-alt"></i> {{$modelo->personal->area->descripcion}}</span>
+                                                <span class="info-box-number"> <i class="fas fa-user-circle"></i> {{($modelo->persona) ? ($modelo->persona->apellidopaterno . ' ' . $modelo->persona->apellidomaterno . ' ' . $modelo->persona->nombres) : '-'}}</span>
                                             </div>
                                             </div>
                                         </div>

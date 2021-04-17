@@ -47,13 +47,7 @@ class OpcionMenuSeeder extends Seeder
             'orden' => 2,
             'grupomenu_id' => 2
         ]);
-        DB::table('opcionmenu')->insert([
-            'descripcion' => 'Rol Persona',
-            'icono' => 'fas fa-user-plus',
-            'link' => 'admin/rolpersona',
-            'orden' => 3,
-            'grupomenu_id' => 2
-        ]);
+        
         DB::table('opcionmenu')->insert([
             'descripcion' => 'Tipos Usuario',
             'icono' => 'fas fa-users-slash',

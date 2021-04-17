@@ -397,6 +397,9 @@ function mostrarMensaje (mensaje, tipo) {
 		divMensaje.addClass('alert-danger');
 	} else if(tipo === 'OK'){
 		divMensaje.addClass('alert-success');
+	}else if(tipo=='ERROR-ACCESO'){
+		divMensaje.addClass('alert-danger');
+		mensaje='No cuentas con los privilegios para realizar esta acción';
 	};
 	divMensaje.html('<span>' + mensaje + '</span>');
 	divMensaje.show('slow');
@@ -404,66 +407,6 @@ function mostrarMensaje (mensaje, tipo) {
 		divMensaje.html('');
 		divMensaje.hide("slow");
 	},3000);
-}
-
-function mostrarProvincias(ruta, entidad, tipo) {
-	var iddepartamento;
-	if (tipo === 'B') {
-		iddepartamento = $(IDFORMBUSQUEDA + entidad + " :input[id='departamento_id']").val();
-	}
-	if (tipo === 'M') {
-		iddepartamento = $(IDFORMMANTENIMIENTO + entidad + " :input[id='departamento_id']").val();
-	}
-	if (iddepartamento !== '') {
-		ruta = ruta + '/' + iddepartamento;
-	};    
-	var respuesta = '';
-	var data = sendRuta(ruta);
-	data.done(function(msg) {
-		respuesta = msg;
-	}).fail(function(xhr, textStatus, errorThrown) {
-		respuesta = estiloError('Error en el procesamiento de la ruta');
-	}).always(function() {
-		if (tipo === 'B') {
-			$(IDFORMBUSQUEDA + entidad + " :input[id='provincia_id']").html("'<option value=''>Todas</option>");
-			$(IDFORMBUSQUEDA + entidad + " :input[id='provincia_id']").append(respuesta);
-			$(IDFORMBUSQUEDA + entidad + " :input[id='distrito_id']").html("'<option value=''>Todas</option>");
-		}
-		if (tipo === 'M') {
-			$(IDFORMMANTENIMIENTO + entidad + " :input[id='provincia_id']").html("'<option value=''>Seleccione provincia</option>");
-			$(IDFORMMANTENIMIENTO + entidad + " :input[id='provincia_id']").append(respuesta);
-			$(IDFORMMANTENIMIENTO + entidad + " :input[id='distrito_id']").html("'<option value=''>Seleccione distrito</option>");
-		}
-	});
-}
-
-function mostrarDistritos(ruta, entidad, tipo) {
-	var idprovincia;
-	if (tipo === 'B') {
-		idprovincia = $(IDFORMBUSQUEDA + entidad + " :input[id='provincia_id']").val();
-	}
-	if (tipo === 'M') {
-		idprovincia = $(IDFORMMANTENIMIENTO + entidad + " :input[id='provincia_id']").val();
-	}
-	if (idprovincia !== '') {
-		ruta = ruta + '/' + idprovincia;
-	};    
-	var respuesta = '';
-	var data = sendRuta(ruta);
-	data.done(function(msg) {
-		respuesta = msg;
-	}).fail(function(xhr, textStatus, errorThrown) {
-		respuesta = estiloError('Error en el procesamiento de la ruta');
-	}).always(function() {
-		if (tipo === 'B') {
-			$(IDFORMBUSQUEDA + entidad + " :input[id='distrito_id']").html("'<option value=''>Todas</option>");
-			$(IDFORMBUSQUEDA + entidad + " :input[id='distrito_id']").append(respuesta);
-		}
-		if (tipo === 'M') {
-			$(IDFORMMANTENIMIENTO + entidad + " :input[id='distrito_id']").html("'<option value=''>Seleccione distrito</option>");
-			$(IDFORMMANTENIMIENTO + entidad + " :input[id='distrito_id']").append(respuesta);
-		}
-	});
 }
 
 function completarCeros(numero, length) {
@@ -546,79 +489,7 @@ function confirmarpermiso (idformulario, idboton) {
 	});
 }
 
-/**
- * cargar facultades en un select, enviando el id de la universidad
- * @param  {string} ruta    ruta del generador del combo
- * @param  {string} entidad para identificar en que formulario se va a cargar
- * @param  {string} tipo    B: para formulario de búsqueda, M: Para formulario de mantenimiento
- * @return {string}         contenido que se cargará en el select
- */
-function mostrarFacultades(ruta, entidad, tipo) {
- 	var iduniversidad;
- 	if (tipo === 'B') {
- 		iduniversidad = $(IDFORMBUSQUEDA + entidad + " :input[id='universidad_id']").val();
- 	}
- 	if (tipo === 'M') {
- 		iduniversidad = $(IDFORMMANTENIMIENTO + entidad + " :input[id='universidad_id']").val();
- 	}
- 	if (iduniversidad !== '') {
- 		ruta = ruta + '/' + iduniversidad;
- 		var respuesta = '';
- 		var data = sendRuta(ruta);
- 		data.done(function(msg) {
- 			respuesta = msg;
- 		}).fail(function(xhr, textStatus, errorThrown) {
- 			respuesta = estiloError('Error en el procesamiento de la ruta');
- 		}).always(function() {
- 			if (tipo === 'B') {
- 				$(IDFORMBUSQUEDA + entidad + " :input[id='facultad_id']").html("'<option value=''>Todas</option>");
- 				$(IDFORMBUSQUEDA + entidad + " :input[id='facultad_id']").append(respuesta);
- 			}
- 			if (tipo === 'M') {
- 				$(IDFORMMANTENIMIENTO + entidad + " :input[id='facultad_id']").html("'<option value=''>Seleccione facultad</option>");
- 				$(IDFORMMANTENIMIENTO + entidad + " :input[id='facultad_id']").append(respuesta);
- 			}
- 		});
- 	}else{
- 		$(IDFORMMANTENIMIENTO + entidad + " :input[id='facultad_id']").html("'<option value=''>Seleccione facultad</option>");
- 	}
- }
 
-/**
- * cargar escuelas en un select, enviando el id de la facultad
- * @param  {string} ruta    ruta del generador del combo
- * @param  {string} entidad para identificar en que formulario se va a cargar
- * @param  {string} tipo    B: para formulario de búsqueda, M: Para formulario de mantenimiento
- * @return {string}         contenido que se cargará en el select
- */
-function mostrarEscuelas(ruta, entidad, tipo) {
-	var idfacultad;
-	if (tipo === 'B') {
-		idfacultad = $(IDFORMBUSQUEDA + entidad + " :input[id='facultad_id']").val();
-	}
-	if (tipo === 'M') {
-		idfacultad = $(IDFORMMANTENIMIENTO + entidad + " :input[id='facultad_id']").val();
-	}
-	if (idfacultad !== '') {
-		ruta = ruta + '/' + idfacultad;
-	};    
-	var respuesta = '';
-	var data = sendRuta(ruta);
-	data.done(function(msg) {
-		respuesta = msg;
-	}).fail(function(xhr, textStatus, errorThrown) {
-		respuesta = estiloError('Error en el procesamiento de la ruta');
-	}).always(function() {
-		if (tipo === 'B') {
-			$(IDFORMBUSQUEDA + entidad + " :input[id='escuela_id']").html("'<option value=''>Todas</option>");
-			$(IDFORMBUSQUEDA + entidad + " :input[id='escuela_id']").append(respuesta);
-		}
-		if (tipo === 'M') {
-			$(IDFORMMANTENIMIENTO + entidad + " :input[id='escuela_id']").html("'<option value=''>Seleccione distrito</option>");
-			$(IDFORMMANTENIMIENTO + entidad + " :input[id='escuela_id']").append(respuesta);
-		}
-	});
-}
 
 function filter(__val__){
 	var preg = /^([0-9]+\.?[0-9]{0,2})$/; 

@@ -23,7 +23,7 @@ class AccesoSeeder extends Seeder
         
         DB::table('acceso')->insert([
             'tipousuario_id' => 2,
-            'opcionmenu_id' => 1,
+            'opcionmenu_id' => 2,
         ]);
     }
 }

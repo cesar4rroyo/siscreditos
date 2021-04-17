@@ -20,11 +20,7 @@ class Persona extends Model
         'telefono',
         'email',
     ];
-    //funciones para el mantenimiento
-    public function cargo()
-    {
-        return $this->belongsTo(Cargo::class, 'cargo_id');
-    }
+    
    
     public function roles()
     {
