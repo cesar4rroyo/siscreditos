@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             'usuario',
             'acceso',
             'rolpersona',
-            'moneda',
+            // 'moneda',
         ]);
         $this->call(RolSeeder::class);
         $this->call(GrupoMenuSeeder::class);
@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UsuarioSeeder::class);
         $this->call(AccesoSeeder::class);
         $this->call(RolPersonaSeeder::class);
-        $this->call(MonedaSeeder::class);
+        // $this->call(MonedaSeeder::class);
     }
     protected function truncateTablas(array $tablas)
     {
