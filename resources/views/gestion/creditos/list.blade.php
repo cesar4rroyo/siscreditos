@@ -21,10 +21,27 @@
 			<td>{{ date('d-m-Y', strtotime($value->fecha_consumo)) }}</td>
 			<td>{{ $value->cliente->personamaestro->fullname}}</td>
 			<td>{{ $value->plazo }}</td>
+			<td>{{ 'S/. ' . $value->total }}</td>
+			@php
+				if($value->estado=='N'){
+					$estado = 'No Pagado';
+					$class = "danger";
+				}else{
+					$estado = 'Pagado';
+					$class = "success";
+				}
+			@endphp
+			<td>
+				<span class=" badge badge-{{"$class"}}">
+					{{ $estado }}
+				</span>
+			</td>
 			<td>{{ $value->sucursal->razonsocial }}</td>
 			{{-- <td>{{ $value->precioventa }}</td> --}}
-            <td>{!! Form::button('<div class="glyphicon glyphicon-pencil"></div> Realizar Pago', array('onclick' => 'modal (\''.URL::route($ruta["edit"], array($value->idventacredito, 'listar'=>'SI')).'\', \''.$titulo_modificar.'\', this);', 'class' => 'btn btn-sm btn-warning')) !!}</td>
-            {{-- <td>{!! Form::button('<div class="glyphicon glyphicon-remove"></div> Eliminar', array('onclick' => 'modal (\''.URL::route($ruta["delete"], array($value->idventacredito, 'SI')).'\', \''.$titulo_eliminar.'\', this);', 'class' => 'btn btn-sm btn-danger')) !!}</td> --}}
+			@if ($estado=='No Pagado')
+	            <td>{!! Form::button('<div class="fas fa-money-bill"></div>', array('onclick' => 'modal (\''.URL::route($ruta["edit"], array($value->idventacredito, 'listar'=>'SI')).'\', \''.$titulo_modificar.'\', this);', 'class' => 'btn btn-sm btn-warning')) !!}</td>
+			@endif
+            <td>{!! Form::button('<div class="fas fa-route"></div>', array('onclick' => 'modal (\''.URL::route($ruta["delete"], array($value->idventacredito, 'SI')).'\', \''.$titulo_eliminar.'\', this);', 'class' => 'btn btn-sm btn-primary')) !!}</td>
 		</tr>
 		<?php
 		$contador = $contador + 1;

@@ -8,21 +8,23 @@ use Illuminate\Support\Facades\DB;
 use App\Librerias\Libreria;
 use App\Models\Gestion\Creditos;
 use App\Models\Gestion\Sucursal;
+use Carbon\Carbon;
 use Validator;
 
 class CreditosController extends Controller
 {
     protected $folderview      = 'gestion.creditos';
-    protected $tituloAdmin     = 'Tipo de Cambio';
-    protected $tituloRegistrar = 'Registrar Tipo de Cambio';
-    protected $tituloModificar = 'Modificar Tipo de Cambio';
-    protected $tituloEliminar  = 'Eliminar Tipo de Cambio';
-    protected $rutas           = array('create' => 'creditos.create', 
-            'edit'   => 'creditos.edit', 
-            'delete' => 'creditos.eliminar',
-            'search' => 'creditos.buscar',
-            'index'  => 'creditos.index',
-        );
+    protected $tituloAdmin     = 'Créditos';
+    protected $tituloRegistrar = 'Registrar Credito';
+    protected $tituloModificar = 'Realizar Pago';
+    protected $tituloEliminar  = 'Eliminar Cuota';
+    protected $rutas           = array(
+        'create' => 'creditos.create',
+        'edit'   => 'creditos.edit',
+        'delete' => 'creditos.eliminar',
+        'search' => 'creditos.buscar',
+        'index'  => 'creditos.index',
+    );
     /**
      * Mostrar el resultado de búsquedas
      * 
@@ -33,19 +35,23 @@ class CreditosController extends Controller
         $pagina           = $request->input('page');
         $filas            = $request->input('filas');
         $entidad          = 'creditos';
-        $nombre           = Libreria::getParam($request->input('descripcionSearch'));
-        $idsucursal           = Libreria::getParam($request->input('sucursal'));
-        $resultado        = Creditos::with('cliente.personamaestro', 'sucursal')->where('idsucursal', $idsucursal  )->orderBy('fecha_consumo', 'DESC');
+        $nombre           = Libreria::getParam(strtoupper($request->input('descripcionSearch')));
+        $fecinicio        = Libreria::getParam($request->input('fechainicio'));
+        $fecfin           = Libreria::getParam($request->input('fechafin'));
+        $idsucursal       = Libreria::getParam($request->input('sucursal'));
+        $resultado        = Creditos::with('cliente.personamaestro', 'sucursal')->listar($fecinicio, $fecfin, $nombre, $idsucursal);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Fecha Consumo', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Cliente', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Plazo (Días)', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Monto', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Estado', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Sucursal', 'numero' => '1');
         // $cabecera[]       = array('valor' => 'Precio Compra', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Operaciones', 'numero' => '2');
-        
+
         $titulo_modificar = $this->tituloModificar;
         $titulo_eliminar  = $this->tituloEliminar;
         $ruta             = $this->rutas;
@@ -58,9 +64,9 @@ class CreditosController extends Controller
             $paginaactual    = $paramPaginacion['nuevapagina'];
             $lista           = $resultado->paginate($filas);
             $request->replace(array('page' => $paginaactual));
-            return view($this->folderview.'.list')->with(compact('lista', 'paginacion', 'inicio', 'fin', 'entidad', 'cabecera', 'titulo_modificar', 'titulo_eliminar', 'ruta'));
+            return view($this->folderview . '.list')->with(compact('lista', 'paginacion', 'inicio', 'fin', 'entidad', 'cabecera', 'titulo_modificar', 'titulo_eliminar', 'ruta'));
         }
-        return view($this->folderview.'.list')->with(compact('lista', 'entidad'));
+        return view($this->folderview . '.list')->with(compact('lista', 'entidad'));
     }
     /**
      * Display a listing of the resource.
@@ -74,7 +80,7 @@ class CreditosController extends Controller
         $titulo_registrar = $this->tituloRegistrar;
         $ruta             = $this->rutas;
         $cboSucursales = ['' => 'Seleccione una sucursal'] + Sucursal::pluck('razonsocial', 'idsucursal')->all();
-        return view($this->folderview.'.admin')->with(compact('entidad', 'title', 'titulo_registrar', 'ruta', 'cboSucursales'));
+        return view($this->folderview . '.admin')->with(compact('entidad', 'title', 'titulo_registrar', 'ruta', 'cboSucursales'));
     }
 
     /**
@@ -84,20 +90,20 @@ class CreditosController extends Controller
      */
     public function create(Request $request)
     {
-        $tipousuario = session()->all()['tipousuario_id'];        
+        $tipousuario = session()->all()['tipousuario_id'];
         $permiso = Libreria::verificarPermiso($tipousuario);
-        if($permiso !== true){
+        if ($permiso !== true) {
             return $permiso;
         }
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
         $entidad  = 'creditos';
         $creditos = null;
-        
+
         $formData = array('creditos.store');
         $cboSucursales = ['' => 'Seleccione una sucursal'] + Sucursal::pluck('razonsocial', 'idsucursal')->all();
-        $formData = array('route' => $formData, 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
-        $boton    = 'Registrar'; 
-        return view($this->folderview.'.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'cboSucursales'));
+        $formData = array('route' => $formData, 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
+        $boton    = 'Registrar';
+        return view($this->folderview . '.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'cboSucursales'));
     }
 
     /**
@@ -108,40 +114,35 @@ class CreditosController extends Controller
      */
     public function store(Request $request)
     {
-        $tipousuario = session()->all()['tipousuario_id'];        
-        $permiso = Libreria::verificarPermiso($tipousuario);
-        if($permiso !== true){
-            return $permiso;
-        }
-        $listar     = Libreria::getParam($request->input('listar'), 'NO');
-        $reglas     = array(
-            'descripcion'   => 'required',
-            'preciocompra'  => 'required',
-            'precioventa'   => 'required',
-            'codigo'        => 'required',
-        );
-        $mensajes = array(
-            'nombre.required'         => 'Debe ingresar un nombre',
-            'codigo.required'         => 'Debe ingresar un codigo',
-            'preciocompra.required'   => 'Debe ingresar el precio de compra',
-            'precioventa.required'    => 'Debe ingresar el precio de venta',
-        );
-            
-        $validacion = Validator::make($request->all(), $reglas, $mensajes);
-        if ($validacion->fails()) {
-            return $validacion->messages()->toJson();
-        }
-        $error = DB::transaction(function() use($request){
-            $creditos = creditos::create([
-                'nombre'        =>  strtoupper($request->nombre),
-                'codigo'        =>  strtoupper($request->codigo),
-                'preciocompra'  =>  $request->preciocompra,
-                'precioventa'   =>  $request->precioventa,
-                'descripcion'   =>  Libreria::getParam($request->descripcion),
-            ]);
-        });
+        // $listar     = Libreria::getParam($request->input('listar'), 'NO');
+        // $reglas     = array(
+        //     'descripcion'   => 'required',
+        //     'preciocompra'  => 'required',
+        //     'precioventa'   => 'required',
+        //     'codigo'        => 'required',
+        // );
+        // $mensajes = array(
+        //     'nombre.required'         => 'Debe ingresar un nombre',
+        //     'codigo.required'         => 'Debe ingresar un codigo',
+        //     'preciocompra.required'   => 'Debe ingresar el precio de compra',
+        //     'precioventa.required'    => 'Debe ingresar el precio de venta',
+        // );
 
-        return is_null($error) ? "OK" : $error;
+        // $validacion = Validator::make($request->all(), $reglas, $mensajes);
+        // if ($validacion->fails()) {
+        //     return $validacion->messages()->toJson();
+        // }
+        // $error = DB::transaction(function () use ($request) {
+        //     $creditos = creditos::create([
+        //         'nombre'        =>  strtoupper($request->nombre),
+        //         'codigo'        =>  strtoupper($request->codigo),
+        //         'preciocompra'  =>  $request->preciocompra,
+        //         'precioventa'   =>  $request->precioventa,
+        //         'descripcion'   =>  Libreria::getParam($request->descripcion),
+        //     ]);
+        // });
+
+        // return is_null($error) ? "OK" : $error;
     }
 
     /**
@@ -163,22 +164,15 @@ class CreditosController extends Controller
      */
     public function edit($id, Request $request)
     {
-        $tipousuario = session()->all()['tipousuario_id'];        
-        $permiso = Libreria::verificarPermiso($tipousuario);
-        if($permiso !== true){
-            return $permiso;
-        }
-        $existe = Libreria::verificarExistencia($id, 'creditos');
-        if ($existe !== true) {
-            return $existe;
-        }
+
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
-        $creditos   = creditos::find($id);
+        $creditos   = Creditos::find($id);
+        $fecha = Carbon::now()->toDateString();
         $entidad  = 'creditos';
         $formData = array('creditos.update', $id);
-        $formData = array('route' => $formData, 'method' => 'PUT', 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
-        $boton    = 'Modificar';
-        return view($this->folderview.'.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar'));
+        $formData = array('route' => $formData, 'method' => 'PUT', 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
+        $boton    = 'Realizar Pago';
+        return view($this->folderview . '.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'fecha'));
     }
 
     /**
@@ -190,12 +184,7 @@ class CreditosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $tipousuario = session()->all()['tipousuario_id'];        
-        $permiso = Libreria::verificarPermiso($tipousuario);
-        if($permiso !== true){
-            return $permiso;
-        }
-        $existe = Libreria::verificarExistencia($id, 'creditos');
+        $existe = Libreria::verificarExistencia($id, 'ventacredito');
         if ($existe !== true) {
             return $existe;
         }
@@ -214,15 +203,15 @@ class CreditosController extends Controller
         $validacion = Validator::make($request->all(), $reglas, $mensajes);
         if ($validacion->fails()) {
             return $validacion->messages()->toJson();
-        } 
-        $error = DB::transaction(function() use($request, $id){
+        }
+        $error = DB::transaction(function () use ($request, $id) {
             $creditos = creditos::find($id);
             $creditos->update([
-                'nombre'=> strtoupper($request->nombre),
-                'codigo'=> strtoupper($request->codigo),
-                'preciocompra'=>$request->preciocompra,
-                'precioventa'=>$request->precioventa,
-                'descripcion'=> Libreria::getParam($request->descripcion),
+                'nombre' => strtoupper($request->nombre),
+                'codigo' => strtoupper($request->codigo),
+                'preciocompra' => $request->preciocompra,
+                'precioventa' => $request->precioventa,
+                'descripcion' => Libreria::getParam($request->descripcion),
             ]);
         });
         return is_null($error) ? "OK" : $error;
@@ -236,16 +225,16 @@ class CreditosController extends Controller
      */
     public function destroy($id)
     {
-        $tipousuario = session()->all()['tipousuario_id'];        
+        $tipousuario = session()->all()['tipousuario_id'];
         $permiso = Libreria::verificarPermiso($tipousuario);
-        if($permiso !== true){
+        if ($permiso !== true) {
             return $permiso;
         }
         $existe = Libreria::verificarExistencia($id, 'creditos');
         if ($existe !== true) {
             return $existe;
         }
-        $error = DB::transaction(function() use($id){
+        $error = DB::transaction(function () use ($id) {
             $creditos = creditos::find($id);
             $creditos->delete();
         });
@@ -254,9 +243,9 @@ class CreditosController extends Controller
 
     public function eliminar($id, $listarLuego)
     {
-        $tipousuario = session()->all()['tipousuario_id'];        
+        $tipousuario = session()->all()['tipousuario_id'];
         $permiso = Libreria::verificarPermiso($tipousuario);
-        if($permiso !== true){
+        if ($permiso !== true) {
             return $permiso;
         }
         $existe = Libreria::verificarExistencia($id, 'creditos');
@@ -269,7 +258,7 @@ class CreditosController extends Controller
         }
         $modelo   = creditos::find($id);
         $entidad  = 'creditos';
-        $formData = array('route' => array('creditos.destroy', $id), 'method' => 'DELETE', 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
+        $formData = array('route' => array('creditos.destroy', $id), 'method' => 'DELETE', 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
         $boton    = 'Eliminar';
         return view('reusable.confirmarEliminar')->with(compact('modelo', 'formData', 'entidad', 'boton', 'listar'));
     }
