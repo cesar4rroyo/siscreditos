@@ -54,10 +54,10 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware'=>['auth'
 //aca las demas rutas
 Route::group(['middleware' => ['auth', 'acceso']], function () {
     /*Dashboard Principal*/
-    Route::get('dashboard', 'Gestion\TipoCambioController@index')->name('dashboard');
-    Route::post('moneda/buscar', 'Gestion\TipoCambioController@buscar')->name('moneda.buscar');
-    Route::get('moneda/eliminar/{id}/{listarluego}', 'Gestion\TipoCambioController@eliminar')->name('moneda.eliminar');
-    Route::resource('moneda', 'Gestion\TipoCambioController', array('except' => array('show')));
+    Route::get('dashboard', 'Gestion\CreditosController@index')->name('dashboard');
+    Route::post('creditos/buscar', 'Gestion\CreditosController@buscar')->name('creditos.buscar');
+    Route::get('creditos/eliminar/{id}/{listarluego}', 'Gestion\CreditosController@eliminar')->name('creditos.eliminar');
+    Route::resource('creditos', 'Gestion\CreditosController', array('except' => array('show')));
     /* Rutas Perfil & Cambio Contraseña */
     Route::get('persona/perfil', 'Admin\UsuarioController@perfil')->name('usuario.perfil');
     Route::post('persona/password/{id}', 'Admin\UsuarioController@cambiarpassword')->name('usuario.cambiarpassword');

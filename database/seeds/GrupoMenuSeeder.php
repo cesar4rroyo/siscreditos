@@ -13,13 +13,18 @@ class GrupoMenuSeeder extends Seeder
     public function run()
     {
         DB::table('grupomenu')->insert([
-            'descripcion' => 'Gestión de Cambio',
+            'descripcion' => 'Creditos',
             'icono' => 'fas fa-folder',
             'orden' => 1,
         ]);       
         DB::table('grupomenu')->insert([
             'descripcion' => 'Usuarios',
             'icono' => 'fas fa-users',
+            'orden' => 3,
+        ]); 
+        DB::table('grupomenu')->insert([
+            'descripcion' => 'Reportes',
+            'icono' => 'fas fa-folder',
             'orden' => 3,
         ]); 
       /*   DB::table('grupomenu')->insert([

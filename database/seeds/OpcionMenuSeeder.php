@@ -24,9 +24,9 @@ class OpcionMenuSeeder extends Seeder
         
         //start Gestion        
         DB::table('opcionmenu')->insert([
-            'descripcion' => 'Tipo de Cambio',
+            'descripcion' => 'Creditos',
             'icono' => 'far fa-file-alt',
-            'link' => 'moneda',
+            'link' => 'creditos',
             'orden' => 2,
             'grupomenu_id' => 1
         ]);        

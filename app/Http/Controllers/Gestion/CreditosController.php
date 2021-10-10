@@ -3,73 +3,26 @@
 namespace App\Http\Controllers\Gestion;
 
 use App\Http\Controllers\Controller;
-use App\Models\Moneda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Librerias\Libreria;
+use App\Models\Gestion\Creditos;
+use App\Models\Gestion\Sucursal;
 use Validator;
 
-class TipoCambioController extends Controller
+class CreditosController extends Controller
 {
-    protected $folderview      = 'gestion.moneda';
+    protected $folderview      = 'gestion.creditos';
     protected $tituloAdmin     = 'Tipo de Cambio';
     protected $tituloRegistrar = 'Registrar Tipo de Cambio';
     protected $tituloModificar = 'Modificar Tipo de Cambio';
     protected $tituloEliminar  = 'Eliminar Tipo de Cambio';
-    protected $rutas           = array('create' => 'moneda.create', 
-            'edit'   => 'moneda.edit', 
-            'delete' => 'moneda.eliminar',
-            'search' => 'moneda.buscar',
-            'index'  => 'moneda.index',
+    protected $rutas           = array('create' => 'creditos.create', 
+            'edit'   => 'creditos.edit', 
+            'delete' => 'creditos.eliminar',
+            'search' => 'creditos.buscar',
+            'index'  => 'creditos.index',
         );
-
-
-     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-   
-
-    /**
-     * API RESPONSE, return all values,or specific
-     * 
-     * @return JSON 
-     */
-
-     public function getTipoCambios($id=null){
-        if(!is_null($id)){
-            $moneda = Moneda::find($id);
-        }else{
-            $moneda = Moneda::all();
-        }
-
-        if(!$moneda){
-            return response()->json(['errors'=>Array(['code'=>404,'message'=>'No se encuentraron datos.'])],404);
-        }
-        $data = [];
-        if(!is_null($id) && $moneda){
-            $data=[
-                'moneda'=>$moneda->nombre,
-                'codigo'=>$moneda->codigo,
-                'descripcion'=>$moneda->descripcion,
-                'tc_venta'=>$moneda->precioventa,
-                'tc_compra'=>$moneda->precioventa,
-            ]; 
-        }else{
-        foreach($moneda as $item){
-            $data[]=[
-                'moneda'=>$item->nombre,
-                'codigo'=>$item->codigo,
-                'descripcion'=>$item->descripcion,
-                'tc_venta'=>$item->precioventa,
-                'tc_compra'=>$item->precioventa,
-            ];
-            
-        }}
-        return response()->json(['status'=>'ok','data'=>$data],200);
-     }
-    
     /**
      * Mostrar el resultado de búsquedas
      * 
@@ -79,17 +32,18 @@ class TipoCambioController extends Controller
     {
         $pagina           = $request->input('page');
         $filas            = $request->input('filas');
-        $entidad          = 'moneda';
+        $entidad          = 'creditos';
         $nombre           = Libreria::getParam($request->input('descripcionSearch'));
-        $resultado        = Moneda::where('nombre', 'LIKE', '%'.strtoupper($nombre).'%')->orderBy('created_at', 'ASC');
+        $idsucursal           = Libreria::getParam($request->input('sucursal'));
+        $resultado        = Creditos::with('cliente.personamaestro', 'sucursal')->where('idsucursal', $idsucursal  )->orderBy('fecha_consumo', 'DESC');
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Nombre', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Descripcion', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Código', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Precio Venta', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Precio Compra', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Fecha Consumo', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Cliente', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Plazo (Días)', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Sucursal', 'numero' => '1');
+        // $cabecera[]       = array('valor' => 'Precio Compra', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Operaciones', 'numero' => '2');
         
         $titulo_modificar = $this->tituloModificar;
@@ -115,11 +69,12 @@ class TipoCambioController extends Controller
      */
     public function index()
     {
-        $entidad          = 'moneda';
+        $entidad          = 'creditos';
         $title            = $this->tituloAdmin;
         $titulo_registrar = $this->tituloRegistrar;
         $ruta             = $this->rutas;
-        return view($this->folderview.'.admin')->with(compact('entidad', 'title', 'titulo_registrar', 'ruta'));
+        $cboSucursales = ['' => 'Seleccione una sucursal'] + Sucursal::pluck('razonsocial', 'idsucursal')->all();
+        return view($this->folderview.'.admin')->with(compact('entidad', 'title', 'titulo_registrar', 'ruta', 'cboSucursales'));
     }
 
     /**
@@ -135,13 +90,14 @@ class TipoCambioController extends Controller
             return $permiso;
         }
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
-        $entidad  = 'moneda';
-        $moneda = null;
+        $entidad  = 'creditos';
+        $creditos = null;
         
-        $formData = array('moneda.store');
+        $formData = array('creditos.store');
+        $cboSucursales = ['' => 'Seleccione una sucursal'] + Sucursal::pluck('razonsocial', 'idsucursal')->all();
         $formData = array('route' => $formData, 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
         $boton    = 'Registrar'; 
-        return view($this->folderview.'.mant')->with(compact('moneda', 'formData', 'entidad', 'boton', 'listar'));
+        return view($this->folderview.'.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'cboSucursales'));
     }
 
     /**
@@ -176,7 +132,7 @@ class TipoCambioController extends Controller
             return $validacion->messages()->toJson();
         }
         $error = DB::transaction(function() use($request){
-            $moneda = Moneda::create([
+            $creditos = creditos::create([
                 'nombre'        =>  strtoupper($request->nombre),
                 'codigo'        =>  strtoupper($request->codigo),
                 'preciocompra'  =>  $request->preciocompra,
@@ -212,17 +168,17 @@ class TipoCambioController extends Controller
         if($permiso !== true){
             return $permiso;
         }
-        $existe = Libreria::verificarExistencia($id, 'moneda');
+        $existe = Libreria::verificarExistencia($id, 'creditos');
         if ($existe !== true) {
             return $existe;
         }
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
-        $moneda   = Moneda::find($id);
-        $entidad  = 'moneda';
-        $formData = array('moneda.update', $id);
+        $creditos   = creditos::find($id);
+        $entidad  = 'creditos';
+        $formData = array('creditos.update', $id);
         $formData = array('route' => $formData, 'method' => 'PUT', 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
         $boton    = 'Modificar';
-        return view($this->folderview.'.mant')->with(compact('moneda', 'formData', 'entidad', 'boton', 'listar'));
+        return view($this->folderview.'.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar'));
     }
 
     /**
@@ -239,7 +195,7 @@ class TipoCambioController extends Controller
         if($permiso !== true){
             return $permiso;
         }
-        $existe = Libreria::verificarExistencia($id, 'moneda');
+        $existe = Libreria::verificarExistencia($id, 'creditos');
         if ($existe !== true) {
             return $existe;
         }
@@ -260,8 +216,8 @@ class TipoCambioController extends Controller
             return $validacion->messages()->toJson();
         } 
         $error = DB::transaction(function() use($request, $id){
-            $moneda = Moneda::find($id);
-            $moneda->update([
+            $creditos = creditos::find($id);
+            $creditos->update([
                 'nombre'=> strtoupper($request->nombre),
                 'codigo'=> strtoupper($request->codigo),
                 'preciocompra'=>$request->preciocompra,
@@ -285,13 +241,13 @@ class TipoCambioController extends Controller
         if($permiso !== true){
             return $permiso;
         }
-        $existe = Libreria::verificarExistencia($id, 'moneda');
+        $existe = Libreria::verificarExistencia($id, 'creditos');
         if ($existe !== true) {
             return $existe;
         }
         $error = DB::transaction(function() use($id){
-            $moneda = Moneda::find($id);
-            $moneda->delete();
+            $creditos = creditos::find($id);
+            $creditos->delete();
         });
         return is_null($error) ? "OK" : $error;
     }
@@ -303,7 +259,7 @@ class TipoCambioController extends Controller
         if($permiso !== true){
             return $permiso;
         }
-        $existe = Libreria::verificarExistencia($id, 'moneda');
+        $existe = Libreria::verificarExistencia($id, 'creditos');
         if ($existe !== true) {
             return $existe;
         }
@@ -311,9 +267,9 @@ class TipoCambioController extends Controller
         if (!is_null(Libreria::obtenerParametro($listarLuego))) {
             $listar = $listarLuego;
         }
-        $modelo   = Moneda::find($id);
-        $entidad  = 'moneda';
-        $formData = array('route' => array('moneda.destroy', $id), 'method' => 'DELETE', 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
+        $modelo   = creditos::find($id);
+        $entidad  = 'creditos';
+        $formData = array('route' => array('creditos.destroy', $id), 'method' => 'DELETE', 'class' => 'form-horizontal', 'id' => 'formMantenimiento'.$entidad, 'autocomplete' => 'off');
         $boton    = 'Eliminar';
         return view('reusable.confirmarEliminar')->with(compact('modelo', 'formData', 'entidad', 'boton', 'listar'));
     }

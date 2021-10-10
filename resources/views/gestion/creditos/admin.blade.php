@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Tipo de Cambio</div>
+                <div class="card-header">CREDITOS DE VENTAS</div>
                 
                 <div class="card-body">
                     <div class="row">
@@ -21,6 +21,10 @@
                             {!! Form::label('descripcionSearch', 'Nombre') !!}
                             {!! Form::text('descripcionSearch', '', array('class' => 'form-control ', 'id' => 'descripcionSearch')) !!}
                         </div>
+						<div class="col-lg-4 col-md-4  form-group">
+							{!! Form::label('sucursal', 'Sucursal') !!}
+							{!! Form::select('sucursal', $cboSucursales, "",array('class' => 'form-control form-control input-xs', 'id' => 'sucursal', 'onchange' => 'buscar(\''.$entidad.'\')')) !!}
+						</div>
                         <div class="col-lg-2 col-md-2  form-group" style="min-width: 150px;">
                             {!! Form::label('nombre', 'Filas a mostrar') !!}
                             {!! Form::selectRange('filas', 1, 30, 10, array('class' => 'form-control input-xs', 'onchange' => 'buscar(\''.$entidad.'\')')) !!}
