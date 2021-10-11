@@ -13,11 +13,11 @@ class PersonaSeeder extends Seeder
     public function run()
     {
         DB::table('persona')->insert([
-            'nombres' => 'César',
-            'apellidopaterno' => 'Arroyo',
-            'apellidomaterno' => 'Torres',
-            'dni' => '71482136',
-            'telefono' => '924734626',
+            'nombres' => 'Operador',
+            'apellidopaterno' => 'Marakos',
+            'apellidomaterno' => 'Creditos',
+            'dni' => '88888888',
+            'telefono' => '999999999',
         ]);
     }
 }

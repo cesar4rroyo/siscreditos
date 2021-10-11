@@ -10,6 +10,7 @@ class Creditos extends Model
     public $connection = 'pgsql';
     protected $table = 'ventacredito';
     protected $primaryKey = 'idventacredito';
+    public $timestamps = false;
 
     public function cliente()
     {
@@ -20,7 +21,11 @@ class Creditos extends Model
     {
         return $this->belongsTo(Sucursal::class, 'idsucursal');
     }
-    public function scopelistar($query, $fecinicio, $fecfin, $nombre, $sucursal)
+    public function pagos()
+    {
+        return $this->hasMany(Pagos::class, 'idventacredito');
+    }
+    public function scopelistar($query, $fecinicio, $fecfin, $nombre, $sucursal, $estado)
     {
         return $query
             ->where(function ($subquery) use ($fecinicio) {
@@ -45,6 +50,11 @@ class Creditos extends Model
             ->where(function ($subquery) use ($sucursal) {
                 if (!is_null($sucursal) && strlen($sucursal) > 0) {
                     $subquery->where('idsucursal',  $sucursal);
+                }
+            })
+            ->where(function ($subquery) use ($estado) {
+                if (!is_null($estado) && strlen($estado) > 0) {
+                    $subquery->where('estado',  $estado);
                 }
             })
             ->orderBy('fecha_consumo', 'DESC');

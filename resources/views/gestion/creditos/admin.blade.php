@@ -31,6 +31,10 @@
                                 {!! Form::label('sucursal', 'Sucursal') !!}
                                 {!! Form::select('sucursal', $cboSucursales, '', ['class' => 'form-control form-control input-xs', 'id' => 'sucursal', 'onchange' => 'buscar(\'' . $entidad . '\')']) !!}
                             </div>
+                            <div class="col-sm form-group">
+                                {!! Form::label('estado', 'Estado') !!}
+                                {!! Form::select('estado', $cboestados, '', ['class' => 'form-control form-control input-xs', 'id' => 'estado', 'onchange' => 'buscar(\'' . $entidad . '\')']) !!}
+                            </div>
                             <div class="col-lg-2 col-md-2  form-group" style="min-width: 150px;">
                                 {!! Form::label('nombre', 'Filas a mostrar') !!}
                                 {!! Form::selectRange('filas', 1, 30, 10, ['class' => 'form-control input-xs', 'onchange' => 'buscar(\'' . $entidad . '\')']) !!}

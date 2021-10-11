@@ -18,10 +18,10 @@ Route::get('auth/login', 'Seguridad\LoginController@index')->name('login');
 Route::post('auth/login', 'Seguridad\LoginController@login')->name('login_post');
 Route::get('auth/logout', 'Seguridad\LoginController@logout')->name('logout');
 
-
+Route::get('/', 'Admin\InicioController@index');
 
 //middleware "root" es para el Usuario-> ADMINISTRADOR PRINCIAPAL, ID=1
-Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware'=>['auth', 'root']], function () {
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'root']], function () {
     /* Rutas de ACCESO */
     Route::get('acceso', 'AccesoController@index')->name('acceso');
     Route::post('acceso', 'AccesoController@store')->name('store_acceso');
@@ -65,7 +65,4 @@ Route::group(['middleware' => ['auth', 'acceso']], function () {
     Route::post('persona/buscar', 'Admin\PersonaController@buscar')->name('persona.buscar');
     Route::get('persona/eliminar/{id}/{listarluego}', 'Admin\PersonaController@eliminar')->name('persona.eliminar');
     Route::resource('persona', 'Admin\PersonaController', array('except' => array('show')));
-
 });
-
-    
