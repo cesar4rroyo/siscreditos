@@ -19,9 +19,9 @@ class OpcionMenuSeeder extends Seeder
             'link' => 'persona',
             'orden' => 1,
             'grupomenu_id' => 2
-        ]);       
+        ]);
         //end Grupo Persona
-        
+
         //start Gestion        
         DB::table('opcionmenu')->insert([
             'descripcion' => 'Creditos',
@@ -29,9 +29,9 @@ class OpcionMenuSeeder extends Seeder
             'link' => 'creditos',
             'orden' => 2,
             'grupomenu_id' => 1
-        ]);        
+        ]);
         //end Gestion
-        
+
         //start Grupo Usuarios
         DB::table('opcionmenu')->insert([
             'descripcion' => 'Usuario',
@@ -47,7 +47,7 @@ class OpcionMenuSeeder extends Seeder
             'orden' => 2,
             'grupomenu_id' => 2
         ]);
-        
+
         DB::table('opcionmenu')->insert([
             'descripcion' => 'Tipos Usuario',
             'icono' => 'fas fa-users-slash',
@@ -77,5 +77,23 @@ class OpcionMenuSeeder extends Seeder
             'grupomenu_id' => 2
         ]);
         //end Grupo Usuarios
+        //start Grupo Reportes
+        DB::table('opcionmenu')->insert([
+            'descripcion' => 'Reporte de Comandas',
+            'icono' => 'fas fa-chart-area',
+            'link' => 'reportecomanda',
+            'orden' => 1,
+            'grupomenu_id' => 3
+        ]);
+        DB::table('opcionmenu')->insert([
+            'descripcion' => 'Reporte de Comandas Área',
+            'icono' => 'fas fa-chart-area',
+            'link' => 'reportecomandaarea',
+            'orden' => 2,
+            'grupomenu_id' => 3
+        ]);
+        //end Grupo Reportes
+
+
     }
 }

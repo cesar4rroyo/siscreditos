@@ -65,4 +65,12 @@ Route::group(['middleware' => ['auth', 'acceso']], function () {
     Route::post('persona/buscar', 'Admin\PersonaController@buscar')->name('persona.buscar');
     Route::get('persona/eliminar/{id}/{listarluego}', 'Admin\PersonaController@eliminar')->name('persona.eliminar');
     Route::resource('persona', 'Admin\PersonaController', array('except' => array('show')));
+    //Para comandas GERENAR
+    Route::post('reportecomanda/buscar', 'Gestion\ReporteComandasController@buscar')->name('reportecomanda.buscar');
+    Route::get('reportecomanda/eliminar/{id}/{listarluego}', 'Gestion\ReporteComandasController@eliminar')->name('reportecomanda.eliminar');
+    Route::resource('reportecomanda', 'Gestion\ReporteComandasController', array('except' => array('show')));
+    //Para comandas Area
+    Route::post('reportecomandaarea/buscar', 'Gestion\ReporteComandasAreaController@buscar')->name('reportecomandaarea.buscar');
+    Route::get('reportecomandaarea/eliminar/{id}/{listarluego}', 'Gestion\ReporteComandasAreaController@eliminar')->name('reportecomandaarea.eliminar');
+    Route::resource('reportecomandaarea', 'Gestion\ReporteComandasAreaController', array('except' => array('show')));
 });
