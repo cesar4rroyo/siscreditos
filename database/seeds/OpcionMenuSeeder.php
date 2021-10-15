@@ -85,13 +85,13 @@ class OpcionMenuSeeder extends Seeder
             'orden' => 1,
             'grupomenu_id' => 3
         ]);
-        DB::table('opcionmenu')->insert([
-            'descripcion' => 'Reporte de Comandas Área',
-            'icono' => 'fas fa-chart-area',
-            'link' => 'reportecomandaarea',
-            'orden' => 2,
-            'grupomenu_id' => 3
-        ]);
+        // DB::table('opcionmenu')->insert([
+        //     'descripcion' => 'Reporte de Comandas Área',
+        //     'icono' => 'fas fa-chart-area',
+        //     'link' => 'reportecomandaarea',
+        //     'orden' => 2,
+        //     'grupomenu_id' => 3
+        // ]);
         //end Grupo Reportes
 
 
