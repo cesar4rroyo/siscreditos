@@ -39,13 +39,16 @@ class ReporteComandasController extends Controller
         $idsucursal       = Libreria::getParam($request->input('sucursal'));
         $estado           = null;
         $area             = Libreria::getParam($request->input('area')) ?? '';
-        $resultado        = Movimiento::with('detallemovimientoventa.detallemovimientoalmacen')->listar($fecinicio, $fecfin, 5, $idsucursal, $area, $estado);
+        $resultado        = Movimiento::with('detallemovimientoventa', 'detallemovimientopedido.movimientoventa.documentocaja')->listar($fecinicio, $fecfin, 5, $idsucursal, $area, $estado);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'ID', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Fecha', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Hora', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Número Comanda', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Comprobante', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Est. Cuenta', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Productos', 'numero' => '1');
         // $cabecera[]       = array('valor' => 'Area', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Sucursal', 'numero' => '1');
@@ -68,9 +71,9 @@ class ReporteComandasController extends Controller
             $paginaactual    = $paramPaginacion['nuevapagina'];
             $lista           = $resultado->paginate($filas);
             $request->replace(array('page' => $paginaactual));
-            return view($this->folderview . '.list')->with(compact('lista', 'paginacion', 'inicio', 'fin', 'entidad', 'cabecera', 'titulo_modificar', 'titulo_eliminar', 'ruta', 'area'));
+            return view($this->folderview . '.list')->with(compact('lista', 'paginacion', 'inicio', 'fin', 'entidad', 'cabecera', 'titulo_modificar', 'titulo_eliminar', 'ruta', 'area', 'idsucursal'));
         }
-        return view($this->folderview . '.list')->with(compact('lista', 'entidad', 'area'));
+        return view($this->folderview . '.list')->with(compact('lista', 'entidad', 'area', 'idsucursal'));
     }
     /**
      * Display a listing of the resource.

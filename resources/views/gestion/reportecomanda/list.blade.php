@@ -21,6 +21,7 @@ setlocale(LC_ALL, 'es_ES');
             @foreach ($lista as $key => $value)
                 <tr>
                     <td>{{ $contador }}</td>
+                    <td>{{ $value->idmovimiento }}</td>
                     <td>{{ date_format(date_create($value->fecha), 'd/m/y') }}</td>
                     <td>{{ date_format(date_create($value->fecha), 'H:i:s') }}</td>
                     <td>
@@ -29,8 +30,45 @@ setlocale(LC_ALL, 'es_ES');
                         </span>
                     </td>
                     <td>
+                        @if ($idsucursal != '')
+                            {{-- {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->numero }} --}}
+                            {{-- {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal) }} --}}
+                            @foreach ($value->detallemovimientopedido->where('idsucursal', $idsucursal) as $item)
+                                <span>
+                                    {{ $item->movimientoventa }}
+                                </span><br>
+                            @endforeach
+                        @else
+                            {{ $value->detallemovimientopedido->first() }}
+                        @endif
+                    </td>
+                    <td>
+                        @if ($idsucursal != '')
+                            {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->numerooperacion }}
+                        @else
+                            {{ $value->detallemovimientopedido->first()->movimientoventa->documentocaja->first()->numerooperacion }}
+                        @endif
+                    </td>
+
+                    <td>
+                        @foreach ($value->detallemovimientopedido as $item)
+                            @php
+                                $producto = $item->detallemovimientoalmacen->producto;
+                                if ($producto->impresora) {
+                                    $impresora = $producto->impresora->nombre;
+                                } else {
+                                    $impresora = '';
+                                }
+                            @endphp
+                            <span class=" badge badge-pill">{{ $producto->descripcion }}
+                            </span>
+                            <span class=" badge badge-success">
+                                {{ ' x ' . (int) $item->detallemovimientoalmacen->cantidad . ' ' . $producto->unidad->descripcion }}
+                            </span>
+                            <span class=" badge badge-primary">{{ $impresora }}</span><br>
+                        @endforeach
                         {{-- {{ $value->detallemovimientoalmacen }} --}}
-                        @foreach ($value->detallemovimientoalmacen as $item)
+                        {{-- @foreach ($value->detallemovimientoalmacen as $item)
                             @switch($area)
                                 @case('CO')
                                     @if ($item->producto->impresora)
@@ -108,7 +146,7 @@ setlocale(LC_ALL, 'es_ES');
                                     @endphp
                                     <span class=" badge badge-primary">{{ $impresora }}</span><br>
                             @endswitch
-                        @endforeach
+                        @endforeach --}}
                     </td>
                     <td>{{ $value->sucursal->razonsocial }}</td>
                     {{-- <td>{{ $value->plazo }}</td>

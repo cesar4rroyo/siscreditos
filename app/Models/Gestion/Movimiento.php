@@ -42,9 +42,14 @@ class Movimiento extends Model
     {
         return $this->hasMany(DetalleMovimientoAlmacen::class, 'idmovimiento');
     }
+    public function documentocaja()
+    {
+        return $this->hasMany(Movimiento::class, 'idmovimientoref');
+    }
     public function scopelistar($query, $fecinicio, $fecfin, $tipomovimiento, $sucursal, $area, $estado)
     {
         return $query
+            ->where('estado', 'N')
             ->where(function ($subquery) use ($fecinicio) {
                 if (!is_null($fecinicio) && strlen($fecinicio) > 0) {
                     $subquery->where('fecha', '>=', date_format(date_create($fecinicio),  'Y-m-d H:i:s'));

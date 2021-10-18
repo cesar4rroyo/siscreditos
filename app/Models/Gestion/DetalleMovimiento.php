@@ -28,8 +28,9 @@ class DetalleMovimiento extends Model
     }
     public function movimientoventa()
     {
-        return $this->belongsTo(MovimientoVenta::class, 'idmovimiento');
+        return $this->belongsTo(Movimiento::class, 'idmovimiento')->where('idtipomovimiento', 2);
     }
+
     public function movimientopedido()
     {
         return $this->belongsTo(Movimiento::class, 'idmovimientoref');
