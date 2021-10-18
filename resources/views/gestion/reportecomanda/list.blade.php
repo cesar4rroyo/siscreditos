@@ -21,7 +21,7 @@ setlocale(LC_ALL, 'es_ES');
             @foreach ($lista as $key => $value)
                 <tr>
                     <td>{{ $contador }}</td>
-                    <td>{{ $value->idmovimiento }}</td>
+                    {{-- <td>{{ $value->idmovimiento }}</td> --}}
                     <td>{{ date_format(date_create($value->fecha), 'd/m/y') }}</td>
                     <td>{{ date_format(date_create($value->fecha), 'H:i:s') }}</td>
                     <td>
@@ -30,28 +30,17 @@ setlocale(LC_ALL, 'es_ES');
                         </span>
                     </td>
                     <td>
-                        @if ($idsucursal != '')
-                            {{-- {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->numero }} --}}
-                            {{-- {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal) }} --}}
-                            @foreach ($value->detallemovimientopedido->where('idsucursal', $idsucursal) as $item)
-                                <span>
-                                    {{ $item->movimientoventa }}
-                                </span><br>
-                            @endforeach
-                        @else
-                            {{ $value->detallemovimientopedido->first() }}
-                        @endif
+                        {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->numero }}
                     </td>
                     <td>
-                        @if ($idsucursal != '')
-                            {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->numerooperacion }}
-                        @else
-                            {{ $value->detallemovimientopedido->first()->movimientoventa->documentocaja->first()->numerooperacion }}
-                        @endif
+                        {{ 'S/.' .
+    $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->total }}
                     </td>
-
                     <td>
-                        @foreach ($value->detallemovimientopedido as $item)
+                        {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->comentario }}
+                    </td>
+                    <td>
+                        @foreach ($value->detallemovimientopedido->where('idsucursal', $idsucursal) as $item)
                             @php
                                 $producto = $item->detallemovimientoalmacen->producto;
                                 if ($producto->impresora) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Gestion;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Librerias\Libreria;
+use App\Models\Gestion\DetalleMovimiento;
 use App\Models\Gestion\Movimiento;
 use App\Models\Gestion\Sucursal;
 
@@ -23,6 +24,8 @@ class ReporteComandasController extends Controller
         'search' => 'reportecomanda.buscar',
         'index'  => 'reportecomanda.index',
     );
+
+
     /**
      * Mostrar el resultado de búsquedas
      * 
@@ -30,6 +33,9 @@ class ReporteComandasController extends Controller
      */
     public function buscar(Request $request)
     {
+
+
+
         $pagina           = $request->input('page');
         $filas            = $request->input('filas');
         $entidad          = 'movimiento';
@@ -39,15 +45,23 @@ class ReporteComandasController extends Controller
         $idsucursal       = Libreria::getParam($request->input('sucursal'));
         $estado           = null;
         $area             = Libreria::getParam($request->input('area')) ?? '';
-        $resultado        = Movimiento::with('detallemovimientoventa', 'detallemovimientopedido.movimientoventa.documentocaja')->listar($fecinicio, $fecfin, 5, $idsucursal, $area, $estado);
+        $resultado        =
+            Movimiento::with(['detallemovimientoventa' => function ($q) use ($idsucursal) {
+                $q->where('idsucursal', $idsucursal);
+            }], ['detallemovimientopedido.movimientoventa' => function ($q) use ($idsucursal) {
+                $q->where('idsucursal', $idsucursal);
+            }], ['detallemovimientopedido.movimientoventa' => function ($q) use ($idsucursal) {
+                $q->where('idsucursal', $idsucursal);
+            }])->listar($fecinicio, $fecfin, 5, $idsucursal, $area, $estado);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'ID', 'numero' => '1');
+        // $cabecera[]       = array('valor' => 'ID', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Fecha', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Hora', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Número Comanda', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Comprobante', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Total', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Est. Cuenta', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Productos', 'numero' => '1');
         // $cabecera[]       = array('valor' => 'Area', 'numero' => '1');
@@ -86,7 +100,7 @@ class ReporteComandasController extends Controller
         $title            = $this->tituloAdmin;
         $titulo_registrar = $this->tituloRegistrar;
         $ruta             = $this->rutas;
-        $cboSucursales = ['' => 'Seleccione una sucursal'] + Sucursal::pluck('razonsocial', 'idsucursal')->all();
+        $cboSucursales =  Sucursal::pluck('razonsocial', 'idsucursal')->all();
         $cboAreas = ['' => 'TODAS', 'CO' => 'Cocina', 'BA' => 'Bar', 'CA' => 'Caja'];
         return view($this->folderview . '.admin')->with(compact('entidad', 'title', 'titulo_registrar', 'ruta', 'cboSucursales', 'cboAreas'));
     }

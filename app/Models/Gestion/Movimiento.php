@@ -44,7 +44,7 @@ class Movimiento extends Model
     }
     public function documentocaja()
     {
-        return $this->hasMany(Movimiento::class, 'idmovimientoref');
+        return $this->hasMany(Movimiento::class, 'idmovimiento');
     }
     public function scopelistar($query, $fecinicio, $fecfin, $tipomovimiento, $sucursal, $area, $estado)
     {
@@ -62,7 +62,13 @@ class Movimiento extends Model
             })
             ->where(function ($subquery) use ($sucursal) {
                 if (!is_null($sucursal) && strlen($sucursal) > 0) {
-                    $subquery->where('idsucursal',  $sucursal);
+                    $subquery->where('idsucursal',  $sucursal)
+                        ->whereHas('detallemovimientopedido', function ($q2) use ($sucursal) {
+                            return $q2->where('idsucursal', $sucursal)
+                                ->whereHas('movimientoventa', function ($q3) use ($sucursal) {
+                                    $q3->where('idsucursal', $sucursal);
+                                });
+                        });
                 }
             })
             ->where(function ($subquery) use ($tipomovimiento) {
@@ -75,6 +81,7 @@ class Movimiento extends Model
                     $subquery->where('estado',  $estado);
                 }
             })
+            // ->whereHas('detallemovimientopedido')
             // ->where(function ($subquery) use ($area) {
             //     if (!is_null($area) && strlen($area) > 0) {
             //         $subquery->whereHas('detallemovimientoalmacen',  function ($q2) use ($area) {
