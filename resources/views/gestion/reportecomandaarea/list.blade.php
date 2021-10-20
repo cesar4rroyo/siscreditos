@@ -20,10 +20,32 @@
                     <td>{{ $contador }}</td>
                     <td>{{ date_format(date_create($value->movimientoventa->fecha), 'd-m-y') }}</td>
                     <td>{{ date_format(date_create($value->movimientoventa->fecha), 'H:i:s') }}</td>
-                    <td>{{ $value->movimientoventa }}</td>
-                    <td>{{ $value->producto->idimpresora ? $value->producto->impresora->nombre : 'NO DEFINIDO' }}
+                    <td>
+                        <span class=" badge badge-success">
+                            {{ $value->movimientoventa->detallemovimientoventa
+                                ->where('idsucursal', $idsucursal)
+                                ->where('iddetallemovalmacen', $value->iddetallemovalmacen)
+                                ->first()->movimientopedido->numero
+                            }}
+                        </span>
                     </td>
-                    <td>{{ $value->producto->descripcion }}</td>
+                    {{-- <td>{{ $value->producto->where()  }}
+                    </td> --}}
+                    <td>
+                        <span class=" badge badge-pill">
+                            {{ $value->producto->descripcion }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class=" badge badge-pill">
+                            {{ $value->cantidad }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class=" badge badge-info">
+                            {{ $value->producto->unidad->descripcion }}
+                        </span>
+                    </td>
                     {{--  --}}
                     <td>{{ $value->sucursal->razonsocial }}</td>
                     {{-- <td>{{ $value->plazo }}</td>

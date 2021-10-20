@@ -29,7 +29,7 @@
                             </div> --}}
                             <div class="col-sm form-group">
                                 {!! Form::label('sucursal', 'Sucursal') !!}
-                                {!! Form::select('sucursal', $cboSucursales, '', ['class' => 'form-control form-control input-xs', 'id' => 'sucursal', 'onchange' => 'buscar(\'' . $entidad . '\')']) !!}
+                                {!! Form::select('sucursal', $cboSucursales, 1, ['class' => 'form-control form-control input-xs', 'id' => 'sucursal', 'onchange' => 'buscar(\'' . $entidad . '\')']) !!}
                             </div>
                             <div class="col-sm form-group">
                                 {!! Form::label('area', 'Área') !!}

@@ -42,17 +42,15 @@ class ReporteComandasAreaController extends Controller
         $idsucursal       = Libreria::getParam($request->input('sucursal'));
         $estado           = null;
         $area             = Libreria::getParam($request->input('area'));
-        $resultado        = DetalleMovimientoAlmacen::with('producto.impresora', 'movimientoventa.detallemovimientopedido')
-            ->listar(Carbon::parseFromLocale($fecinicio, 'es')->format('Y-m-d H:i:s'), Carbon::parseFromLocale($fecfin, 'es')->format('Y-m-d H:i:s'), $idsucursal, null);
-        // $sql = Str::replaceArray('?', $resultado->getBindings(), $resultado->toSql());
-        // dd($sql);
+        $resultado        = DetalleMovimientoAlmacen::with('producto.impresora', 'movimientoventa.detallemovimientoventa')
+            ->listar($fecinicio, $fecfin, $idsucursal, $area);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Fecha', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Hora', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Número Comanda', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Área', 'numero' => '1');
+        // $cabecera[]       = array('valor' => 'Área', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Producto', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Cantidad', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Unidad', 'numero' => '1');
@@ -77,9 +75,9 @@ class ReporteComandasAreaController extends Controller
             $paginaactual    = $paramPaginacion['nuevapagina'];
             $lista           = $resultado->paginate($filas);
             $request->replace(array('page' => $paginaactual));
-            return view($this->folderview . '.list')->with(compact('lista', 'paginacion', 'inicio', 'fin', 'entidad', 'cabecera', 'titulo_modificar', 'titulo_eliminar', 'ruta'));
+            return view($this->folderview . '.list')->with(compact('lista', 'paginacion', 'inicio', 'fin', 'entidad', 'cabecera', 'titulo_modificar', 'titulo_eliminar', 'ruta', 'idsucursal', 'area'));
         }
-        return view($this->folderview . '.list')->with(compact('lista', 'entidad'));
+        return view($this->folderview . '.list')->with(compact('lista', 'entidad', 'idsucursal', 'area'));
     }
     /**
      * Display a listing of the resource.
@@ -92,8 +90,8 @@ class ReporteComandasAreaController extends Controller
         $title            = $this->tituloAdmin;
         $titulo_registrar = $this->tituloRegistrar;
         $ruta             = $this->rutas;
-        $cboSucursales = ['' => 'Seleccione una sucursal'] + Sucursal::pluck('razonsocial', 'idsucursal')->all();
-        $cboAreas = ['' => 'TODAS', 'C' => 'Cocina', 'B' => 'Bar'];
+        $cboSucursales = Sucursal::pluck('razonsocial', 'idsucursal')->all();
+        $cboAreas = ['' => 'TODAS', '1' => 'Cocina', '4' => 'Bar'];
         return view($this->folderview . '.admin')->with(compact('entidad', 'title', 'titulo_registrar', 'ruta', 'cboSucursales', 'cboAreas'));
     }
 }

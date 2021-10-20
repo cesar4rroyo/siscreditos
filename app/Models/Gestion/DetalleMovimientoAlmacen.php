@@ -42,11 +42,27 @@ class DetalleMovimientoAlmacen extends Model
             })
             ->where(function ($subquery) use ($sucursal) {
                 if (!is_null($sucursal) && strlen($sucursal) > 0) {
-                    $subquery->where('idsucursal',  $sucursal);
+                    $subquery->where('idsucursal',  $sucursal)
+                        ->whereHas('movimientoventa', function ($q2) use ($sucursal) {
+                            return $q2->where('idsucursal', $sucursal)
+                                ->whereHas('detallemovimientoventa', function ($q3) use ($sucursal) {
+                                    $q3->where('idsucursal', $sucursal);
+                                });
+                        });
                 }
             })
-            ->whereHas('movimientoventa', function ($q2) {
-                $q2->orderBy('fecha', 'desc');
-            });
+            // ->where(function ($subquery) use ($sucursal) {
+            //     if (!is_null($sucursal) && strlen($sucursal) > 0) {
+            //         $subquery->where('idsucursal',  $sucursal);
+            //     }
+            // })
+            ->where(function ($subquery) use ($area) {
+                if (!is_null($area) && strlen($area) > 0) {
+                    $subquery->whereHas('producto',  function ($q2) use ($area) {
+                        $q2->where('idimpresora',  $area);
+                    });
+                }
+            })
+            ->orderBy('idmovimiento', 'DESC');
     }
 }
