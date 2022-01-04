@@ -48,8 +48,9 @@ class BancoController extends Controller
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Nombre', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Nro. Cuenta', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Moneda', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Dirección', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Telefono', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Operaciones', 'numero' => '2');
 
         $titulo_modificar = $this->tituloModificar;
@@ -94,8 +95,9 @@ class BancoController extends Controller
         $banco = null;
         $formData = array('banco.store');
         $formData = array('route' => $formData, 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
+        $cboMoneda = array('' => 'Seleccione una opción', 'Soles' => 'Soles', 'Dolares' => 'Dolares');
         $boton    = 'Registrar';
-        return view($this->folderview . '.mant')->with(compact('banco', 'formData', 'entidad', 'boton', 'listar'));
+        return view($this->folderview . '.mant')->with(compact('banco', 'formData', 'entidad', 'boton', 'listar', 'cboMoneda'));
     }
 
     /**
@@ -109,9 +111,13 @@ class BancoController extends Controller
         $listar     = Libreria::getParam($request->input('listar'), 'NO');
         $reglas     = array(
             'nombre' => 'required',
+            'cuenta' => 'required',
+            'moneda' => 'required',
         );
         $mensajes = array(
             'nombre.required'         => 'Debe ingresar un nombre',
+            'cuenta.required'         => 'Debe ingresar el Nro de cuenta',
+            'moneda.required'         => 'Debe ingresar el tipo de moneda',
         );
         $validacion = Validator::make($request->all(), $reglas, $mensajes);
         if ($validacion->fails()) {
@@ -122,6 +128,8 @@ class BancoController extends Controller
                 'nombre' => strtoupper($request->input('nombre')),     
                 'direccion' => strtoupper($request->input('direccion')),
                 'telefono' => strtoupper($request->input('telefono')),
+                'cuenta' => strtoupper($request->input('cuenta')),
+                'moneda' => strtoupper($request->input('moneda')),
             ]);
         });
         return is_null($error) ? "OK" : $error;
@@ -142,10 +150,11 @@ class BancoController extends Controller
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
         $banco = Banco::find($id);
         $entidad  = 'banco';
+        $cboMoneda = array('' => 'Seleccione una opción', 'Soles' => 'Soles', 'Dolares' => 'Dolares');
         $formData = array('banco.update', $id);
         $formData = array('route' => $formData, 'method' => 'PUT', 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
         $boton    = 'Modificar';
-        return view($this->folderview . '.mant')->with(compact('banco', 'formData', 'entidad', 'boton', 'listar'));
+        return view($this->folderview . '.mant')->with(compact('banco', 'formData', 'entidad', 'boton', 'listar', 'cboMoneda'));
     }
 
      /**
@@ -163,9 +172,13 @@ class BancoController extends Controller
         }
         $reglas     = array(
             'nombre' => 'required',
+            'cuenta' => 'required',
+            'moneda' => 'required',
         );
         $mensajes = array(
             'nombre.required'         => 'Debe ingresar un nombre',
+            'cuenta.required'         => 'Debe ingresar el Nro de cuenta',
+            'moneda.required'         => 'Debe ingresar el tipo de moneda',
         );
         $validacion = Validator::make($request->all(), $reglas, $mensajes);
         if ($validacion->fails()) {
@@ -174,9 +187,11 @@ class BancoController extends Controller
         $error = DB::transaction(function () use ($request, $id) {
             $banco = banco::find($id);
             $banco->update([
-                'nombre' => strtoupper($request->input('nombre')),
+                'nombre' => strtoupper($request->input('nombre')),     
                 'direccion' => strtoupper($request->input('direccion')),
                 'telefono' => strtoupper($request->input('telefono')),
+                'cuenta' => strtoupper($request->input('cuenta')),
+                'moneda' => strtoupper($request->input('moneda')),
             ]);
             
         });

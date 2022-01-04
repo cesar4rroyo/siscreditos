@@ -14,6 +14,8 @@ class Banco extends Model
         'nombre',
         'direccion',
         'telefono',
+        'cuenta',
+        'moneda',
     ];
 
     /**

@@ -8,6 +8,18 @@
 		</div>
 	</div>
 	<div class="form-group">
+		{!! Form::label('cuenta', 'Nro. Cuenta:', array('class' => 'col-lg-12 col-md-12 col-sm-12 control-label')) !!}
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			{!! Form::text('cuenta', null, array('class' => 'form-control input-xs', 'id' => 'cuenta', 'placeholder' => 'Ingrese el Nro. de cuenta del Banco')) !!}
+		</div>
+	</div>
+	<div class="form-group">
+		{!! Form::label('moneda', 'Moneda:', array('class' => 'col-lg-12 col-md-12 col-sm-12 control-label')) !!}
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			{!! Form::select('moneda', $cboMoneda, null, array('class' => 'form-control input-xs', 'id' => 'moneda')) !!}
+		</div>
+	</div>
+	<div class="form-group">
 		{!! Form::label('direccion', 'Dirección:', array('class' => 'col-lg-12 col-md-12 col-sm-12 control-label')) !!}
 		<div class="col-lg-12 col-md-12 col-sm-12">
 			{!! Form::text('direccion', null, array('class' => 'form-control input-xs', 'id' => 'direccion', 'placeholder' => 'Ingrese el direccion del Banco')) !!}
