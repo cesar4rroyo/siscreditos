@@ -1,10 +1,18 @@
 <div id="divMensajeError{!! $entidad !!}"></div>
 {!! Form::model($creditos, $formData) !!}
 {!! Form::hidden('listar', $listar, ['id' => 'listar']) !!}
-<div class="form-group">
-    {!! Form::label('fecha', 'Fecha de Pago:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
-    <div class="col-lg-12 col-md-12 col-sm-12">
-        {!! Form::date('fecha', $fecha, ['class' => 'form-control input-xs', 'id' => 'fecha', 'placeholder' => 'Ingrese el nombre']) !!}
+<div class="row">
+    <div class="form-group col-sm">
+        {!! Form::label('fecha', 'Fecha de Pago:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            {!! Form::date('fecha', $fecha, ['class' => 'form-control input-xs', 'id' => 'fecha', 'placeholder' => 'Ingrese el nombre']) !!}
+        </div>
+    </div>
+    <div class="form-group col-sm">
+        {!! Form::label('banco', 'Banco:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            {!! Form::select('banco', $cboBanco, null, array('class' => 'form-control input-xs', 'id' => 'banco')) !!}
+        </div>
     </div>
 </div>
 <div class="row">
@@ -17,6 +25,12 @@
         {!! Form::label('monto', 'Monto a cancelar:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
         <div class="col-lg-12 col-md-12 col-sm-12">
             {!! Form::number('monto', null, ['class' => 'form-control input-xs', 'id' => 'monto', 'placeholder' => 'Ingrese monto', 'step' => '0.0001']) !!}
+        </div>
+    </div>
+    <div class="col-sm form-group">
+        {!! Form::label('comision', 'Comisión:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            {!! Form::number('comision', null, ['class' => 'form-control input-xs', 'id' => 'comision', 'placeholder' => 'Ingrese comision', 'step' => '0.0001']) !!}
         </div>
     </div>
     <div class="col-sm form-group">
@@ -41,7 +55,7 @@
 {!! Form::close() !!}
 <script type="text/javascript">
     $(document).ready(function() {
-        configurarAnchoModal('400');
+        configurarAnchoModal('800');
         init(IDFORMMANTENIMIENTO + '{!! $entidad !!}', 'M', '{!! $entidad !!}');
 
         var total = document.getElementById('total').value;

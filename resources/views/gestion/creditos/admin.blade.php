@@ -35,6 +35,10 @@
                                 {!! Form::label('estado', 'Estado') !!}
                                 {!! Form::select('estado', $cboestados, '', ['class' => 'form-control form-control input-xs', 'id' => 'estado', 'onchange' => 'buscar(\'' . $entidad . '\')']) !!}
                             </div>
+                            <div class="col-sm form-group">
+                                {!! Form::label('pedidosya', 'Pedidos Ya') !!}
+                                <input name="pedidosya" id="pedidosya" type="checkbox" value="SI">
+                            </div>
                             <div class="col-lg-2 col-md-2  form-group" style="min-width: 150px;">
                                 {!! Form::label('nombre', 'Filas a mostrar') !!}
                                 {!! Form::selectRange('filas', 1, 30, 10, ['class' => 'form-control input-xs', 'onchange' => 'buscar(\'' . $entidad . '\')']) !!}
@@ -73,6 +77,11 @@
         $(IDFORMBUSQUEDA + '{{ $entidad }} :input[id="descripcionSearch"]').keyup(function(e) {
             var key = window.event ? e.keyCode : e.which;
             if (key == '13') {
+                buscar('{{ $entidad }}');
+            }
+        });
+        $("#pedidosya").change(function() {
+            if(this.checked) {
                 buscar('{{ $entidad }}');
             }
         });

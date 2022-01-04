@@ -46,6 +46,10 @@ class Movimiento extends Model
     {
         return $this->hasMany(Movimiento::class, 'idmovimiento');
     }
+    public function mesa()
+    {
+        return $this->belongsTo(Mesa::class, 'idmesa');
+    }
     public function scopelistar($query, $fecinicio, $fecfin, $tipomovimiento, $sucursal, $area, $estado)
     {
         return $query

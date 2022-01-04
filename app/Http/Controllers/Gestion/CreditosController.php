@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Librerias\Libreria;
+use App\Models\Banco;
 use App\Models\Gestion\Creditos;
 use App\Models\Gestion\Pagos;
 use App\Models\Gestion\Sucursal;
@@ -42,7 +43,8 @@ class CreditosController extends Controller
         $fecfin           = Libreria::getParam($request->input('fechafin'));
         $idsucursal       = Libreria::getParam($request->input('sucursal'));
         $estado           = Libreria::getParam($request->input('estado'));
-        $resultado        = Creditos::with('cliente.personamaestro', 'sucursal')->listar($fecinicio, $fecfin, $nombre, $idsucursal, $estado);
+        $pedidosYa        = Libreria::getParam($request->input('pedidosya'));
+        $resultado        = Creditos::with('cliente.personamaestro', 'sucursal')->listar($fecinicio, $fecfin, $nombre, $idsucursal, $estado, $pedidosYa);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
@@ -105,9 +107,10 @@ class CreditosController extends Controller
 
         $formData = array('creditos.store');
         $cboSucursales = ['' => 'Seleccione una sucursal'] + Sucursal::pluck('razonsocial', 'idsucursal')->all();
+        $cboBanco = ['' => 'Seleccione un banco'] + Banco::pluck('nombre', 'id')->all();
         $formData = array('route' => $formData, 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
         $boton    = 'Registrar';
-        return view($this->folderview . '.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'cboSucursales'));
+        return view($this->folderview . '.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'cboSucursales', 'cboBanco'));
     }
 
     /**
@@ -174,9 +177,10 @@ class CreditosController extends Controller
         $fecha = Carbon::now()->toDateString();
         $entidad  = 'creditos';
         $formData = array('creditos.update', $id);
+        $cboBanco = ['' => 'Seleccione un banco'] + Banco::pluck('nombre', 'id')->all();
         $formData = array('route' => $formData, 'method' => 'PUT', 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
         $boton    = 'Realizar Pago';
-        return view($this->folderview . '.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'fecha'));
+        return view($this->folderview . '.mant')->with(compact('creditos', 'formData', 'entidad', 'boton', 'listar', 'fecha', 'cboBanco'));
     }
 
     /**

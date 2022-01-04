@@ -17,9 +17,11 @@ class CreatePagosTable extends Migration
             $table->id();
             $table->integer('idventacredito');
             $table->integer('idsucursal');
+            $table->integer('idbanco');
             $table->string('comentario')->nullable();
             $table->date('fechapago');
             $table->decimal('monto', 10, 2);
+            $table->decimal('comision', 10, 2);
             $table->timestamps();
             $table->softDeletes();
         });

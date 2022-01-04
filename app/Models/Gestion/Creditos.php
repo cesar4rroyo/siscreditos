@@ -25,7 +25,11 @@ class Creditos extends Model
     {
         return $this->hasMany(Pagos::class, 'idventacredito');
     }
-    public function scopelistar($query, $fecinicio, $fecfin, $nombre, $sucursal, $estado)
+    public function movimiento()
+    {
+        return $this->belongsTo(Movimiento::class, 'idmovimiento');
+    }
+    public function scopelistar($query, $fecinicio, $fecfin, $nombre, $sucursal, $estado, $pedidosYa)
     {
         return $query
             ->where(function ($subquery) use ($fecinicio) {
@@ -55,6 +59,15 @@ class Creditos extends Model
             ->where(function ($subquery) use ($estado) {
                 if (!is_null($estado) && strlen($estado) > 0) {
                     $subquery->where('estado',  $estado);
+                }
+            })
+            ->where(function ($subquery) use ($pedidosYa) {
+                if (!is_null($pedidosYa) && strlen($pedidosYa) > 0) {
+                    $subquery->whereHas('movimiento', function ($q2) use ($pedidosYa) {
+                        $q2->whereHas('mesa', function ($q3) use ($pedidosYa) {
+                            $q3->whereIn('idsalon', [9,10]);
+                        });
+                    });
                 }
             })
             ->orderBy('fecha_consumo', 'DESC');
