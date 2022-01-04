@@ -65,6 +65,10 @@ Route::group(['middleware' => ['auth', 'acceso']], function () {
     Route::post('persona/buscar', 'Admin\PersonaController@buscar')->name('persona.buscar');
     Route::get('persona/eliminar/{id}/{listarluego}', 'Admin\PersonaController@eliminar')->name('persona.eliminar');
     Route::resource('persona', 'Admin\PersonaController', array('except' => array('show')));
+    /* Rutas de BANCO */
+    Route::post('banco/buscar', 'Gestion\BancoController@buscar')->name('banco.buscar');
+    Route::get('banco/eliminar/{id}/{listarluego}', 'Gestion\BancoController@eliminar')->name('banco.eliminar');
+    Route::resource('banco', 'Gestion\BancoController', array('except' => array('show')));
     //Para comandas GERENAR
     Route::post('reportecomanda/buscar', 'Gestion\ReporteComandasController@buscar')->name('reportecomanda.buscar');
     Route::get('reportecomanda/eliminar/{id}/{listarluego}', 'Gestion\ReporteComandasController@eliminar')->name('reportecomanda.eliminar');

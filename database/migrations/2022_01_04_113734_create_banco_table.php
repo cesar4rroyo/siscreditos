@@ -16,6 +16,8 @@ class CreateBancoTable extends Migration
         Schema::create('banco', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
+            $table->string('cuenta');
+            $table->string('moneda');
             $table->string('direccion')->nullable();
             $table->string('telefono')->nullable();
             $table->timestamps();

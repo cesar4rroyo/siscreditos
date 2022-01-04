@@ -76,6 +76,13 @@ class OpcionMenuSeeder extends Seeder
             'orden' => 7,
             'grupomenu_id' => 2
         ]);
+        DB::table('opcionmenu')->insert([
+            'descripcion' => 'Banco',
+            'icono' => 'fas fa-university',
+            'link' => 'banco',
+            'orden' => 8,
+            'grupomenu_id' => 2
+        ]);
         //end Grupo Usuarios
         //start Grupo Reportes
         DB::table('opcionmenu')->insert([
