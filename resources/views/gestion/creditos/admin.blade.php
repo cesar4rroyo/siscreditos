@@ -81,9 +81,7 @@
             }
         });
         $("#pedidosya").change(function() {
-            if(this.checked) {
-                buscar('{{ $entidad }}');
-            }
+            buscar('{{ $entidad }}');
         });
     });
 </script>
