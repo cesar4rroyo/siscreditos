@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Gestion;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Librerias\Libreria;
+use App\Models\Comanda;
 use App\Models\Gestion\DetalleMovimientoAlmacen;
 use App\Models\Gestion\Movimiento;
 use App\Models\Gestion\Sucursal;
@@ -42,26 +43,17 @@ class ReporteComandasAreaController extends Controller
         $idsucursal       = Libreria::getParam($request->input('sucursal'));
         $estado           = null;
         $area             = Libreria::getParam($request->input('area'));
-        $resultado        = DetalleMovimientoAlmacen::with('producto.impresora', 'movimientoventa.detallemovimientoventa')
-            ->listar($fecinicio, $fecfin, $idsucursal, $area);
+        $resultado        = Comanda::with('movimiento', 'impresora')->listar($fecinicio, $fecfin, $idsucursal, $area);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Fecha', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Hora', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Número Comanda', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Área', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Comanda', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Producto', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Cantidad', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Unidad', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Area', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Área', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Sucursal', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Plazo (Días)', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Deuda', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Estado', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Sucursal', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Precio Compra', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Operaciones', 'numero' => '2');
 
         $titulo_modificar = $this->tituloModificar;
         $titulo_eliminar  = $this->tituloEliminar;

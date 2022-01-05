@@ -18,22 +18,24 @@
             @foreach ($lista as $key => $value)
                 <tr>
                     <td>{{ $contador }}</td>
-                    <td>{{ date_format(date_create($value->movimientoventa->fecha), 'd-m-y') }}</td>
-                    <td>{{ date_format(date_create($value->movimientoventa->fecha), 'H:i:s') }}</td>
-                    <td>
-                        <span class=" badge badge-success">
-                            {{ $value->movimientoventa->detallemovimientoventa
-                                ->where('idsucursal', $idsucursal)
-                                ->where('iddetallemovalmacen', $value->iddetallemovalmacen)
-                                ->first()->movimientopedido->numero
-                            }}
-                        </span>
-                    </td>
-                    {{-- <td>{{ $value->producto->where()  }}
-                    </td> --}}
                     <td>
                         <span class=" badge badge-pill">
-                            {{ $value->producto->descripcion }}
+                        {{ date_format(date_create($value->movimiento->fecha), 'd-m-y') }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class=" badge badge-pill">
+                        {{ date_format(date_create($value->movimiento->fecha), 'H:i:s') }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class=" badge badge-success">
+                            {{ $value->numero}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class=" badge badge-pill">
+                            {{ $value->productos }}
                         </span>
                     </td>
                     <td>
@@ -43,31 +45,14 @@
                     </td>
                     <td>
                         <span class=" badge badge-info">
-                            {{ $value->producto->unidad->descripcion }}
+                            {{ $value->impresora->nombre }}
                         </span>
                     </td>
-                    {{--  --}}
-                    <td>{{ $value->sucursal->razonsocial }}</td>
-                    {{-- <td>{{ $value->plazo }}</td>
-                    <td>{{ 'S/. ' . $value->total }}</td>
-                    @php
-                        if ($value->estado == 'N') {
-                            $estado = 'Pendiente';
-                            $class = 'danger';
-                        } else {
-                            $estado = 'Pagado';
-                            $class = 'success';
-                        }
-                    @endphp
                     <td>
-                        <span class=" badge badge-{{ "$class" }}">
-                            {{ $estado }}
+                        <span class=" badge badge-pill">
+                        {{ $value->sucursal->razonsocial }}
                         </span>
-                    </td>
-                    <td>{{ $value->sucursal->razonsocial }}</td> --}}
-                    {{-- <td>{{ $value->precioventa }}</td> --}}
-
-                    {{-- <td>{!! Form::button('<div class="fas fa-route"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['delete'], [$value->idventacredito, 'SI']) . '\', \'' . 'Historial de Pagos' . '\', this);', 'class' => 'btn btn-sm btn-primary']) !!}</td> --}}
+                    </td> 
                 </tr>
                 <?php
                 $contador = $contador + 1;

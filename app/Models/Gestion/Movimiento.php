@@ -22,6 +22,11 @@ class Movimiento extends Model
     {
         return $this->hasOne(Creditos::class, ['idventacredito', 'idsucursal'], ['idventacredito', 'idsucursal']);
     }
+
+    public function comandas()
+    {
+        return $this->hasMany(Comanda::class, ['idcomanda', 'idsucursal'], ['idcomanda', 'idsucursal']);
+    }
    
     public function conceptopago()
     {
