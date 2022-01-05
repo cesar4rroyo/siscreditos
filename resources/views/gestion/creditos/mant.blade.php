@@ -1,6 +1,7 @@
 <div id="divMensajeError{!! $entidad !!}"></div>
 {!! Form::model($creditos, $formData) !!}
 {!! Form::hidden('listar', $listar, ['id' => 'listar']) !!}
+{!! Form::hidden('idsucursal', $creditos->idsucursal, ['id' => 'listar']) !!}
 <div class="row">
     <div class="form-group col-sm">
         {!! Form::label('fecha', 'Fecha de Pago:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
@@ -24,15 +25,25 @@
     <div class="col-sm form-group">
         {!! Form::label('monto', 'Monto a cancelar:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
         <div class="col-lg-12 col-md-12 col-sm-12">
-            {!! Form::number('monto', null, ['class' => 'form-control input-xs', 'id' => 'monto', 'placeholder' => 'Ingrese monto', 'step' => '0.0001']) !!}
+            {!! Form::number('monto', 0, ['class' => 'form-control input-xs', 'id' => 'monto', 'placeholder' => 'Ingrese monto', 'step' => '0.0001']) !!}
         </div>
     </div>
-    <div class="col-sm form-group">
+    @if ($creditos->movimiento->mesa->idsalon==9 || $creditos->movimiento->mesa->idsalon==10)
+        <div class="col-sm form-group">
+            {!! Form::label('comision', 'Comisión:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                {!! Form::number('comision', 0, ['class' => 'form-control input-xs', 'id' => 'comision', 'placeholder' => 'Ingrese comision', 'step' => '0.0001']) !!}
+            </div>
+        </div>
+    @else
+       {!! Form::hidden('comision', 0, ['class' => 'form-control input-xs', 'id' => 'comision', 'placeholder' => 'Ingrese comision', 'step' => '0.0001', 'readonly' => 'readonly']) !!}
+    @endif
+    {{-- <div class="col-sm form-group">
         {!! Form::label('comision', 'Comisión:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
         <div class="col-lg-12 col-md-12 col-sm-12">
             {!! Form::number('comision', null, ['class' => 'form-control input-xs', 'id' => 'comision', 'placeholder' => 'Ingrese comision', 'step' => '0.0001']) !!}
         </div>
-    </div>
+    </div> --}}
     <div class="col-sm form-group">
         {!! Form::label('pendiente', 'Pendiente:', ['class' => 'col-lg-12 col-md-12 col-sm-12 control-label']) !!}
         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -58,17 +69,25 @@
         configurarAnchoModal('800');
         init(IDFORMMANTENIMIENTO + '{!! $entidad !!}', 'M', '{!! $entidad !!}');
 
-        var total = document.getElementById('total').value;
+        
         var pendiente = 0;
 
-        $('#monto').keyup(function() {
-            var monto = parseFloat($('#monto').val());
-            if (monto > total) {
+        document.addEventListener('keyup', function(e) {
+            var total = document.getElementById('total').value;
+            var monto = document.getElementById('monto').value;
+            var comision = document.getElementById('comision').value;
+            total = isNaN(total) || total == '' ? 0 : parseFloat(total);
+            monto = isNaN(monto) || monto == '' ? 0 : parseFloat(monto);
+            comision = isNaN(comision) || comision == '' ? 0 : parseFloat(comision);
+
+            if(monto + comision > total){
                 monto = total;
-                $('#monto').val(monto);
+                comision = 0;
+                document.getElementById('monto').value = monto;
+                document.getElementById('comision').value = comision;
             }
-            pendiente = total - monto;
-            $('#pendiente').val(pendiente);
+            pendiente = total - (monto + comision);
+            document.getElementById('pendiente').value = pendiente;
         });
 
     });

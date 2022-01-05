@@ -12,6 +12,12 @@ class Creditos extends Model
     protected $primaryKey = 'idventacredito';
     public $timestamps = false;
 
+    use \Awobaz\Compoships\Compoships;
+
+    public function getSucursalId()
+    {
+        return $this->idsucursal;
+    }
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'idcliente');
@@ -27,7 +33,7 @@ class Creditos extends Model
     }
     public function movimiento()
     {
-        return $this->belongsTo(Movimiento::class, 'idmovimiento');
+        return $this->belongsTo(Movimiento::class, ['idmovimiento', 'idsucursal'], ['idmovimiento', 'idsucursal']);
     }
     public function scopelistar($query, $fecinicio, $fecfin, $nombre, $sucursal, $estado, $pedidosYa)
     {
@@ -63,9 +69,9 @@ class Creditos extends Model
             })
             ->where(function ($subquery) use ($pedidosYa) {
                 if (!is_null($pedidosYa) && strlen($pedidosYa) > 0) {
-                    $subquery->whereHas('movimiento', function ($q2) use ($pedidosYa) {
-                        $q2->whereHas('mesa', function ($q3) use ($pedidosYa) {
-                            $q3->whereIn('idsalon', [9,10]);
+                    $subquery->whereHas('movimiento', function ($q2) {
+                        $q2->whereHas('mesa', function ($q3) {
+                            $q3->whereIn('mesa.idsalon', [9,10]);
                         });
                     });
                 }

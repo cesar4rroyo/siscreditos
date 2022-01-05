@@ -44,7 +44,7 @@ class CreditosController extends Controller
         $idsucursal       = Libreria::getParam($request->input('sucursal'));
         $estado           = Libreria::getParam($request->input('estado'));
         $pedidosYa        = Libreria::getParam($request->input('pedidosya'));
-        $resultado        = Creditos::with('cliente.personamaestro', 'sucursal')->listar($fecinicio, $fecfin, $nombre, $idsucursal, $estado, $pedidosYa);
+        $resultado        = Creditos::with('cliente.personamaestro', 'sucursal', 'movimiento')->listar($fecinicio, $fecfin, $nombre, $idsucursal, $estado, $pedidosYa);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
@@ -173,7 +173,8 @@ class CreditosController extends Controller
     {
 
         $listar   = Libreria::getParam($request->input('listar'), 'NO');
-        $creditos   = Creditos::find($id);
+        $idsucursal   = Libreria::getParam($request->input('idsucursal'));
+        $creditos   = Creditos::with('movimiento.mesa')->where('idsucursal', $idsucursal)->where('idventacredito', $id)->first();
         $fecha = Carbon::now()->toDateString();
         $entidad  = 'creditos';
         $formData = array('creditos.update', $id);
@@ -194,9 +195,12 @@ class CreditosController extends Controller
     {
         $reglas     = array(
             'monto'   => 'required',
+            'banco'   => 'required',
+            
         );
         $mensajes = array(
             'monto.required'         => 'Debe ingresar el monto',
+            'banco.required'         => 'Debe ingresar el banco',
         );
         $validacion = Validator::make($request->all(), $reglas, $mensajes);
         if ($validacion->fails()) {
@@ -206,17 +210,22 @@ class CreditosController extends Controller
         $error = DB::transaction(function () use ($request, $id) {
             $monto = $request->input('monto');
             $fechapago = $request->input('fecha');
+            $comision = $request->input('comision');
+            $idbanco = $request->input('banco');
+            $idsucursal = $request->input('idsucursal');
             $comentario = Libreria::getParam($request->input('comentario'));
-            $creditos = Creditos::find($id);
+            $creditos = Creditos::where('idventacredito', $id)->where('idsucursal', $idsucursal)->first();
             if ($creditos->total > $monto) {
                 $creditos->total = $creditos->total - $monto;
                 $creditos->save();
                 $pagos = Pagos::create([
                     'idventacredito' => $id,
                     'monto' => $monto,
+                    'comision' => $comision,
                     'fechapago' => $fechapago,
                     'comentario' => $comentario,
-                    'idsucursal' => $creditos->idsucursal,
+                    'idsucursal' => $idsucursal,
+                    'idbanco' => $idbanco,
                 ]);
             } else {
                 $creditos->estado = 'C';
@@ -228,7 +237,9 @@ class CreditosController extends Controller
                     'monto' => $monto,
                     'fechapago' => $fechapago,
                     'comentario' => $comentario,
-                    'idsucursal' => $creditos->idsucursal,
+                    'comision' => $comision,
+                    'idsucursal' => $idsucursal,
+                    'idbanco' => $idbanco,
                 ]);
             }
         });
@@ -259,14 +270,14 @@ class CreditosController extends Controller
         return is_null($error) ? "OK" : $error;
     }
 
-    public function eliminar($id, $listarLuego)
+    public function eliminar($id, $sucursal, $listarLuego)
     {
         $listar = "NO";
         if (!is_null(Libreria::obtenerParametro($listarLuego))) {
             $listar = $listarLuego;
         }
-        $modelo   = Creditos::with('pagos')->find($id);
-        $creditos = Creditos::with('pagos')->find($id);
+        $modelo   = Creditos::with('pagos.banco')->where('idventacredito',$id)->where('idsucursal', $sucursal)->first();
+        $creditos = Creditos::with('pagos.banco')->where('idventacredito',$id)->where('idsucursal', $sucursal)->first();
         $entidad  = 'creditos';
         $formData = array('route' => array('creditos.destroy', $id), 'method' => 'DELETE', 'class' => 'form-horizontal', 'id' => 'formMantenimiento' . $entidad, 'autocomplete' => 'off');
         $boton    = 'Eliminar';

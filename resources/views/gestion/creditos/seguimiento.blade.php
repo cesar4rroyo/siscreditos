@@ -7,6 +7,7 @@
                     <th>Nro</th>
                     <th>Fecha de Pago</th>
                     <th>Monto</th>
+                    <th>Banco</th>
                     <th>Comentario</th>
                     {{-- <th>Saldo</th>
                 <th>Estado</th>
@@ -19,6 +20,7 @@
                         <td>{{ $credito->id }}</td>
                         <td>{{ $credito->fechapago }}</td>
                         <td>{{ $credito->monto }}</td>
+                        <td>{{ $credito->banco->nombre }}</td>
                         <td>{{ $credito->comentario }}</td>
                     </tr>
                 @endforeach

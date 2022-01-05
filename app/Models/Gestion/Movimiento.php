@@ -2,6 +2,7 @@
 
 namespace App\Models\Gestion;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Movimiento extends Model
@@ -10,6 +11,18 @@ class Movimiento extends Model
     protected $table = 'movimiento';
     protected $primaryKey = 'idmovimiento';
 
+    public function getSucursalId()
+    {
+        return $this->idsucursal;
+    }
+
+    use \Awobaz\Compoships\Compoships;
+
+    public function creditos()
+    {
+        return $this->hasOne(Creditos::class, ['idventacredito', 'idsucursal'], ['idventacredito', 'idsucursal']);
+    }
+   
     public function conceptopago()
     {
         return $this->belongsTo(ConceptoPago::class, 'idconceptopago');

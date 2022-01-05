@@ -18,7 +18,9 @@
             @foreach ($lista as $key => $value)
                 <tr>
                     <td>{{ $contador }}</td>
-                    <td>{{ date('d-m-Y', strtotime($value->fecha_consumo)) }}</td>
+                    {{-- <td>{{ $value->idventacredito . ' === ' . $value->movimiento->idmovimiento . " ----" . $value->idmovimiento  . " ++++++ " . $value->movimiento->total }}</td> --}}
+                    {{-- <td>{{ date('d-m-Y', strtotime($value->fecha_consumo)) }}</td> --}}
+                    <td>{{ date('d-m-Y H:m:s', strtotime($value->movimiento->fecha))  }}</td>
                     <td>{{ $value->cliente->personamaestro->fullname }}</td>
                     <td>{{ $value->plazo }}</td>
                     <td>{{ 'S/. ' . $value->total }}</td>
@@ -39,9 +41,9 @@
                     <td>{{ $value->sucursal->razonsocial }}</td>
                     {{-- <td>{{ $value->precioventa }}</td> --}}
                     @if ($estado == 'Pendiente')
-                        <td>{!! Form::button('<div class="fas fa-money-bill"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['edit'], [$value->idventacredito, 'listar' => 'SI']) . '\', \'' . $titulo_modificar . '\', this);', 'class' => 'btn btn-sm btn-warning']) !!}</td>
+                        <td>{!! Form::button('<div class="fas fa-money-bill"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['edit'], [$value->idventacredito, 'idsucursal'=>$value->idsucursal, 'listar' => 'SI']) . '\', \'' . $titulo_modificar . '\', this);', 'class' => 'btn btn-sm btn-warning']) !!}</td>
                     @endif
-                    <td>{!! Form::button('<div class="fas fa-route"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['delete'], [$value->idventacredito, 'SI']) . '\', \'' . 'Historial de Pagos' . '\', this);', 'class' => 'btn btn-sm btn-primary']) !!}</td>
+                    <td>{!! Form::button('<div class="fas fa-route"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['delete'], [$value->idventacredito,'idsucursal'=>$value->idsucursal, 'SI']) . '\', \'' . 'Historial de Pagos' . '\', this);', 'class' => 'btn btn-sm btn-primary']) !!}</td>
                 </tr>
                 <?php
                 $contador = $contador + 1;

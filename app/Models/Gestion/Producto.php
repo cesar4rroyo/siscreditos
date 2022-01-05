@@ -8,7 +8,7 @@ class Producto extends Model
 {
     public $connection = 'pgsql';
     protected $table = 'producto';
-    protected $primaryKey = 'idproducto';
+    protected $primaryKey = ['idproducto', 'idsucursal'];
 
     public function unidad()
     {
