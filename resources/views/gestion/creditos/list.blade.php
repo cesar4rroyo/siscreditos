@@ -43,7 +43,7 @@
                     @if ($estado == 'Pendiente')
                         <td>{!! Form::button('<div class="fas fa-money-bill"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['edit'], [$value->idventacredito, 'idsucursal'=>$value->idsucursal, 'listar' => 'SI']) . '\', \'' . $titulo_modificar . '\', this);', 'class' => 'btn btn-sm btn-warning']) !!}</td>
                     @endif
-                    <td>{!! Form::button('<div class="fas fa-route"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['delete'], [$value->idventacredito,'idsucursal'=>$value->idsucursal, 'SI']) . '\', \'' . 'Historial de Pagos' . '\', this);', 'class' => 'btn btn-sm btn-primary']) !!}</td>
+                    <td>{!! Form::button('<div class="fas fa-route"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['delete'], [$value->idventacredito,'sucursal'=>$value->idsucursal,'listarluego'=>'SI']) . '\', \'' . 'Historial de Pagos' . '\', this);', 'class' => 'btn btn-sm btn-primary']) !!}</td>
                 </tr>
                 <?php
                 $contador = $contador + 1;

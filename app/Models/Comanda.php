@@ -17,6 +17,10 @@ class Comanda extends Model
 
     use \Awobaz\Compoships\Compoships;
 
+    public function movimientoref()
+    {
+        return $this->belongsTo(Movimiento::class, ['idmovimiento', 'idsucursal'], ['idmovimiento', 'idsucursal']);
+    }
     public function movimiento()
     {
         return $this->belongsTo(Movimiento::class, ['idmovimiento', 'idsucursal'], ['idmovimiento', 'idsucursal']);
@@ -33,20 +37,24 @@ class Comanda extends Model
     {
         return $this->belongsTo(Impresora::class, 'idimpresora');
     }
+    public function detallemovalmacen()
+    {
+        return $this->belongsTo(DetalleMovimientoAlmacen::class, ['iddetallemovalmacen', 'idsucursal'], ['iddetallemovalmacen', 'idsucursal']);
+    }
 
     public function scopelistar($query, $fecinicio, $fecfin, $sucursal, $area)
     {
         return $query
             ->where(function ($subquery) use ($fecinicio) {
                 if (!is_null($fecinicio) && strlen($fecinicio) > 0) {
-                    $subquery->whereHas('movimiento', function ($q2) use ($fecinicio) {
+                    $subquery->whereHas('movimientoref', function ($q2) use ($fecinicio) {
                         $q2->where('fecha', '>=', date_format(date_create($fecinicio),  'Y-m-d H:i:s'));
                     });
                 }
             })
             ->where(function ($subquery) use ($fecfin) {
                 if (!is_null($fecfin) && strlen($fecfin) > 0) {
-                    $subquery->whereHas('movimiento', function ($q2) use ($fecfin) {
+                    $subquery->whereHas('movimientoref', function ($q2) use ($fecfin) {
                         $q2->where('fecha', '<=', date_format(date_create($fecfin),  'Y-m-d H:i:s'));
                     });
                 }
@@ -61,6 +69,7 @@ class Comanda extends Model
                     $subquery->where('idimpresora',  $area);
                 }
             })
+            ->whereNotNull('idmovimientoref')
             ->orderBy('idcomanda', 'DESC');
     }
 

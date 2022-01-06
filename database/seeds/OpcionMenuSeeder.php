@@ -81,19 +81,19 @@ class OpcionMenuSeeder extends Seeder
             'icono' => 'fas fa-university',
             'link' => 'banco',
             'orden' => 8,
-            'grupomenu_id' => 2
+            'grupomenu_id' => 1
         ]);
         //end Grupo Usuarios
         //start Grupo Reportes
         DB::table('opcionmenu')->insert([
-            'descripcion' => 'Reporte de Comandas',
+            'descripcion' => 'Facturacion-Est.Cuenta',
             'icono' => 'fas fa-chart-area',
             'link' => 'reportecomanda',
             'orden' => 1,
             'grupomenu_id' => 3
         ]);
         DB::table('opcionmenu')->insert([
-            'descripcion' => 'Reporte de Comandas Área',
+            'descripcion' => 'Comandas x Área',
             'icono' => 'fas fa-chart-area',
             'link' => 'reportecomandaarea',
             'orden' => 2,

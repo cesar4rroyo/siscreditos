@@ -2,6 +2,7 @@
 
 namespace App\Models\Gestion;
 
+use App\Models\Comanda;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,15 +18,15 @@ class Movimiento extends Model
     }
 
     use \Awobaz\Compoships\Compoships;
-
     public function creditos()
     {
         return $this->hasOne(Creditos::class, ['idventacredito', 'idsucursal'], ['idventacredito', 'idsucursal']);
     }
 
+    use \Awobaz\Compoships\Compoships;
     public function comandas()
     {
-        return $this->hasMany(Comanda::class, ['idcomanda', 'idsucursal'], ['idcomanda', 'idsucursal']);
+        return $this->hasMany(Comanda::class, ['idmovimientoref', 'idsucursal'], ['idmovimientoref', 'idsucursal']);
     }
    
     public function conceptopago()
@@ -56,9 +57,10 @@ class Movimiento extends Model
     {
         return $this->hasMany(DetalleMovimiento::class, 'idmovimientoref');
     }
+    use \Awobaz\Compoships\Compoships;
     public function detallemovimientoalmacen()
     {
-        return $this->hasMany(DetalleMovimientoAlmacen::class, 'idmovimiento');
+        return $this->hasMany(DetalleMovimientoAlmacen::class, ['idmovimiento', 'idsucursal'], ['idmovimiento', 'idsucursal']);
     }
     public function documentocaja()
     {
@@ -68,7 +70,7 @@ class Movimiento extends Model
     {
         return $this->belongsTo(Mesa::class, 'idmesa');
     }
-    public function scopelistar($query, $fecinicio, $fecfin, $tipomovimiento, $sucursal, $area, $estado)
+    public function scopelistar($query, $fecinicio, $fecfin, $tipomovimiento=null, $sucursal, $area=null, $estado=null)
     {
         return $query
             ->where('estado', 'N')
@@ -84,13 +86,7 @@ class Movimiento extends Model
             })
             ->where(function ($subquery) use ($sucursal) {
                 if (!is_null($sucursal) && strlen($sucursal) > 0) {
-                    $subquery->where('idsucursal',  $sucursal)
-                        ->whereHas('detallemovimientopedido', function ($q2) use ($sucursal) {
-                            return $q2->where('idsucursal', $sucursal)
-                                ->whereHas('movimientoventa', function ($q3) use ($sucursal) {
-                                    $q3->where('idsucursal', $sucursal);
-                                });
-                        });
+                    $subquery->where('idsucursal', $sucursal);
                 }
             })
             ->where(function ($subquery) use ($tipomovimiento) {
@@ -103,16 +99,6 @@ class Movimiento extends Model
                     $subquery->where('estado',  $estado);
                 }
             })
-            // ->whereHas('detallemovimientopedido')
-            // ->where(function ($subquery) use ($area) {
-            //     if (!is_null($area) && strlen($area) > 0) {
-            //         $subquery->whereHas('detallemovimientoalmacen',  function ($q2) use ($area) {
-            //             $q2->whereHas('producto',  function ($q3) use ($area) {
-            //                 $q3->where('idimpresora',  $area);
-            //             });
-            //         });
-            //     }
-            // })
             ->orderBy('fecha', 'DESC');
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Gestion;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Librerias\Libreria;
+use App\Models\Comanda;
 use App\Models\Gestion\DetalleMovimiento;
+use App\Models\Gestion\DetalleMovimientoAlmacen;
 use App\Models\Gestion\Movimiento;
 use App\Models\Gestion\Sucursal;
 
@@ -45,33 +47,17 @@ class ReporteComandasController extends Controller
         $idsucursal       = Libreria::getParam($request->input('sucursal'));
         $estado           = null;
         $area             = Libreria::getParam($request->input('area')) ?? '';
-        $resultado        =
-            Movimiento::with(['detallemovimientoventa' => function ($q) use ($idsucursal) {
-                $q->where('idsucursal', $idsucursal);
-            }], ['detallemovimientopedido.movimientoventa' => function ($q) use ($idsucursal) {
-                $q->where('idsucursal', $idsucursal);
-            }], ['detallemovimientopedido.movimientoventa' => function ($q) use ($idsucursal) {
-                $q->where('idsucursal', $idsucursal);
-            }])->listar($fecinicio, $fecfin, 5, $idsucursal, $area, $estado);
+        $resultado        = Movimiento::with('comandas','detallemovimientoalmacen.comandas', 'detallemovimientoalmacen.producto')->listar($fecinicio, $fecfin,2, $idsucursal);
         $lista            = $resultado->get();
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'ID', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Fecha', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Hora', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Número Comanda', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Estado de Cuenta', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Comprobante', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Total', 'numero' => '1');
-        $cabecera[]       = array('valor' => 'Est. Cuenta', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Productos', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Area', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Sucursal', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Plazo (Días)', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Deuda', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Estado', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Sucursal', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Precio Compra', 'numero' => '1');
-        // $cabecera[]       = array('valor' => 'Operaciones', 'numero' => '2');
 
         $titulo_modificar = $this->tituloModificar;
         $titulo_eliminar  = $this->tituloEliminar;

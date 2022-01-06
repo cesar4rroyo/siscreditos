@@ -20,144 +20,36 @@ setlocale(LC_ALL, 'es_ES');
             ?>
             @foreach ($lista as $key => $value)
                 <tr>
-                    <td>{{ $contador }}</td>
+                    <td>{{ $value->idmovimiento }}</td>
                     {{-- <td>{{ $value->idmovimiento }}</td> --}}
                     <td>{{ date_format(date_create($value->fecha), 'd/m/y') }}</td>
                     <td>{{ date_format(date_create($value->fecha), 'H:i:s') }}</td>
                     <td>
-                        <span class=" badge badge-danger">
+                        <span class=" badge badge-warning">
+                            {{ $value->comentario }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class=" badge badge-success">
                             {{ $value->numero }}
                         </span>
                     </td>
                     <td>
-                        {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->numero }}
-                    </td>
-                    <td>
-                        {{ 'S/.' .
-    $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->total }}
-                    </td>
-                    <td>
-                        {{ $value->detallemovimientopedido->where('idsucursal', $idsucursal)->first()->movimientoventa->documentocaja->where('idsucursal', $idsucursal)->first()->comentario }}
-                    </td>
-                    <td>
-                        @foreach ($value->detallemovimientopedido->where('idsucursal', $idsucursal) as $item)
-                            @php
-                                $producto = $item->detallemovimientoalmacen->producto;
-                                if ($producto->impresora) {
-                                    $impresora = $producto->impresora->nombre;
-                                } else {
-                                    $impresora = '';
-                                }
-                            @endphp
-                            <span class=" badge badge-pill">{{ $producto->descripcion }}
-                            </span>
-                            <span class=" badge badge-success">
-                                {{ ' x ' . (int) $item->detallemovimientoalmacen->cantidad . ' ' . $producto->unidad->descripcion }}
-                            </span>
-                            <span class=" badge badge-primary">{{ $impresora }}</span><br>
-                        @endforeach
-                        {{-- {{ $value->detallemovimientoalmacen }} --}}
-                        {{-- @foreach ($value->detallemovimientoalmacen as $item)
-                            @switch($area)
-                                @case('CO')
-                                    @if ($item->producto->impresora)
-                                        @if ($item->producto->idimpresora == 1)
-                                            <span class=" badge badge-pill">
-                                                {{ $item->producto->descripcion }}
-                                            </span>
-                                            <span
-                                                class=" badge badge-success">{{ 'x ' . (int) $item->cantidad . '  ' . $item->producto->unidad->descripcion }}</span>
-                                            @php
-                                                if ($item->producto->impresora) {
-                                                    $impresora = $item->producto->impresora->nombre;
-                                                } else {
-                                                    $impresora = '';
-                                                }
-                                                
-                                            @endphp
-                                            <span class=" badge badge-primary">{{ $impresora }}</span><br>
-                                        @endif
-                                    @endif
-                                @break
-                                @case('BA')
-                                    @if ($item->producto->impresora)
-                                        @if ($item->producto->impresora->nombre == 'BAR')
-                                            <span class=" badge badge-pill">
-                                                {{ $item->producto->descripcion }}
-                                            </span>
-                                            <span
-                                                class=" badge badge-success">{{ 'x ' . (int) $item->cantidad . '  ' . $item->producto->unidad->descripcion }}</span>
-                                            @php
-                                                if ($item->producto->impresora) {
-                                                    $impresora = $item->producto->impresora->nombre;
-                                                } else {
-                                                    $impresora = '';
-                                                }
-                                                
-                                            @endphp
-                                            <span class=" badge badge-primary">{{ $impresora }}</span><br>
-                                        @endif
-                                    @endif
-                                @break
-                                @case('CA')
-                                    @if ($item->producto->impresora)
-                                        @if ($item->producto->impresora->nombre == 'CAJA')
-                                            <span class=" badge badge-pill">
-                                                {{ $item->producto->descripcion }}
-                                            </span>
-                                            <span
-                                                class=" badge badge-success">{{ 'x ' . (int) $item->cantidad . '  ' . $item->producto->unidad->descripcion }}</span>
-                                            @php
-                                                if ($item->producto->impresora) {
-                                                    $impresora = $item->producto->impresora->nombre;
-                                                } else {
-                                                    $impresora = '';
-                                                }
-                                                
-                                            @endphp
-                                            <span class=" badge badge-primary">{{ $impresora }}</span><br>
-                                        @endif
-                                    @endif
-                                @break
-                                @default
-                                    <span class=" badge badge-pill">
-                                        {{ $item->producto->descripcion }}
-                                    </span>
-                                    <span
-                                        class=" badge badge-success">{{ 'x ' . (int) $item->cantidad . '  ' . $item->producto->unidad->descripcion }}</span>
-                                    @php
-                                        if ($item->producto->impresora) {
-                                            $impresora = $item->producto->impresora->nombre;
-                                        } else {
-                                            $impresora = '';
-                                        }
-                                        
-                                    @endphp
-                                    <span class=" badge badge-primary">{{ $impresora }}</span><br>
-                            @endswitch
-                        @endforeach --}}
-                    </td>
-                    <td>{{ $value->sucursal->razonsocial }}</td>
-                    {{-- <td>{{ $value->plazo }}</td>
-                    <td>{{ 'S/. ' . $value->total }}</td>
-                    @php
-                        if ($value->estado == 'N') {
-                            $estado = 'Pendiente';
-                            $class = 'danger';
-                        } else {
-                            $estado = 'Pagado';
-                            $class = 'success';
-                        }
-                    @endphp
-                    <td>
-                        <span class=" badge badge-{{ "$class" }}">
-                            {{ $estado }}
+                        <span class=" badge badge-pill">
+                            {{ $value->total }}
                         </span>
                     </td>
-                    <td>{{ $value->sucursal->razonsocial }}</td> --}}
-                    {{-- <td>{{ $value->precioventa }}</td> --}}
-
-                    {{-- <td>{!! Form::button('<div class="fas fa-route"></div>', ['onclick' => 'modal (\'' . URL::route($ruta['delete'], [$value->idventacredito, 'SI']) . '\', \'' . 'Historial de Pagos' . '\', this);', 'class' => 'btn btn-sm btn-primary']) !!}</td> --}}
+                    <td>
+                        {{-- {{dd($value->comandas)}} --}}
+                        @foreach ($value->detallemovimientoalmacen as $item)
+                            {{-- <span class=" badge badge-primary">{{$item->comandas}}</span> --}}
+                            <span class=" badge badge-primary">{{$item->cantidad}}</span>
+                            <span class=" badge badge-pill">{{$item->producto->descripcion}}</span>
+                            <br>
+                        @endforeach
+                    </td>
+                    
+                    <td>{{ $value->sucursal->razonsocial }}</td>
                 </tr>
                 <?php
                 $contador = $contador + 1;
