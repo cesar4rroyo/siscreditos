@@ -49,6 +49,7 @@ class CreditosController extends Controller
         $cabecera         = array();
         $cabecera[]       = array('valor' => '#', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Fecha Consumo', 'numero' => '1');
+        $cabecera[]       = array('valor' => 'Comprobante', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Cliente', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Plazo (Días)', 'numero' => '1');
         $cabecera[]       = array('valor' => 'Deuda', 'numero' => '1');

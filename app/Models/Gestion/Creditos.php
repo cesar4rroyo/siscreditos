@@ -20,7 +20,7 @@ class Creditos extends Model
     }
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class, 'idcliente');
+        return $this->belongsTo(Cliente::class, ['idcliente', 'idsucursal'], ['idpersona', 'idsucursal']);
     }
 
     public function sucursal()
@@ -34,6 +34,11 @@ class Creditos extends Model
     public function movimiento()
     {
         return $this->belongsTo(Movimiento::class, ['idmovimiento', 'idsucursal'], ['idmovimiento', 'idsucursal']);
+    }
+
+    public function getFullNumberAttribute() 
+    {
+        return DB::connection('pgsql')->select("SELECT numero from movimiento where idmovimiento = (SELECT dm.idmovimiento  from detallemovimiento dm where dm.idmovimientoref=" . $this->idmovimiento . " AND dm.idsucursal=" . $this->idsucursal . " LIMIT 1) AND idsucursal=" . $this->idsucursal)[0]->numero;
     }
     public function scopelistar($query, $fecinicio, $fecfin, $nombre, $sucursal, $estado, $pedidosYa)
     {

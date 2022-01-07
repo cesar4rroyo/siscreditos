@@ -21,8 +21,10 @@
                     {{-- <td>{{ $value->idventacredito . ' === ' . $value->movimiento->idmovimiento . " ----" . $value->idmovimiento  . " ++++++ " . $value->movimiento->total }}</td> --}}
                     {{-- <td>{{ date('d-m-Y', strtotime($value->fecha_consumo)) }}</td> --}}
                     <td>{{ date('d-m-Y H:m:s', strtotime($value->movimiento->fecha))  }}</td>
+                    <td>{{ $value->fullnumber  }}</td>
                     <td>{{ $value->cliente->personamaestro->fullname }}</td>
                     <td>{{ $value->plazo }}</td>
+                    <td>{{ $value->idmovimiento }}</td>
                     <td>{{ 'S/. ' . $value->total }}</td>
                     @php
                         if ($value->estado == 'N') {

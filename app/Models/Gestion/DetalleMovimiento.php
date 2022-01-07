@@ -18,6 +18,8 @@ class DetalleMovimiento extends Model
     // {
     //     return $this->belongsTo(Movimiento::class, 'idmovimiento');
     // }
+    use \Awobaz\Compoships\Compoships;
+
     public function detallemovimientoalmacen()
     {
         return $this->belongsTo(DetalleMovimientoAlmacen::class, 'iddetallemovalmacen');
@@ -28,7 +30,7 @@ class DetalleMovimiento extends Model
     }
     public function movimientoventa()
     {
-        return $this->belongsTo(Movimiento::class, 'idmovimiento')->where('idtipomovimiento', 2);
+        return $this->belongsTo(Movimiento::class, ['idmovimiento', 'idsucursal'], ['idmovimiento', 'idsucursal']);
     }
 
     public function movimientopedido()

@@ -11,6 +11,9 @@ class PersonaMaestro extends Model
     protected $primaryKey = 'idpersonamaestro';
     protected $appends = ['fullname'];
 
+    use \Awobaz\Compoships\Compoships;
+
+
     public function getFullNameAttribute() 
     {
         return $this->nombres . ' ' . $this->apellidos;
